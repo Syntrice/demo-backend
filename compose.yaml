@@ -10,6 +10,8 @@ services:
       dockerfile: DemoBackend/Dockerfile
     ports:
       - 8080
+    depends_on:
+      - mssql
   mssql:
     image: mcr.microsoft.com/mssql/server:2022-latest
     hostname: demobackend
@@ -23,9 +25,10 @@ services:
     ports:
       - 1433
     volumes:
-      - ./data/mssql/backups:/var/opt/mssql/backups
-      - ./data/mssql/data:/var/opt/mssql/data
-      - ./data/mssql/log:/var/opt/mssql/log
+      - mssql-data:/var/opt/mssql
+
 networks:
   default:
     name: demobackend
+volumes:
+  mssql-data:

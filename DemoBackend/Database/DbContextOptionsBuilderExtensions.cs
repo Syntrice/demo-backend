@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
+using DemoBackend.Database.Entities;
+using DemoBackend.Database.Seeders;
 
 namespace DemoBackend.Database;
 
@@ -7,20 +9,24 @@ public static class DbContextOptionsBuilderExtensions
 {
     public static DbContextOptionsBuilder SeedDatabase(this DbContextOptionsBuilder optionsBuilder)
     {
+        List<ISeeder> seeders =
+        [
+            new BookSeeder(),
+            new AuthorSeeder(),
+        ];
+
         optionsBuilder.UseSeeding((context, _) =>
         {
-            if (!context.Set<DemoBackend.Database.Entities.Book>().Any())
+            foreach (var seeder in seeders)
             {
-                context.AddRange(SeedData.Books);
-                context.SaveChanges();
+                seeder.Seed(context);
             }
         });
         optionsBuilder.UseAsyncSeeding(async (context, _, cancellationToken) =>
         {
-            if (!context.Set<DemoBackend.Database.Entities.Book>().Any())
+            foreach (var seeder in seeders)
             {
-                context.AddRange(SeedData.Books);
-                await context.SaveChangesAsync(cancellationToken);
+                await seeder.SeedAsync(context);
             }
         });
         return optionsBuilder;

@@ -9,7 +9,7 @@ services:
       context: .
       dockerfile: DemoBackend/Dockerfile
     ports:
-      - 8080
+      - 64609:8080
     depends_on:
       - mssql
   mssql:
@@ -23,7 +23,7 @@ services:
       - MSSQL_LCID=1033
       - TZ=Etc/UTC
     ports:
-      - 1433
+      - 64505:1433
     volumes:
       - mssql-data:/var/opt/mssql
 

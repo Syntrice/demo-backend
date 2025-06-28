@@ -9,25 +9,13 @@ public static class DbContextOptionsBuilderExtensions
 {
     public static DbContextOptionsBuilder SeedDatabase(this DbContextOptionsBuilder optionsBuilder)
     {
-        List<ISeeder> seeders =
-        [
-            new BookSeeder(),
-            new AuthorSeeder(),
-        ];
-
         optionsBuilder.UseSeeding((context, _) =>
         {
-            foreach (var seeder in seeders)
-            {
-                seeder.Seed(context);
-            }
+            new Seeder().Seed(context);
         });
         optionsBuilder.UseAsyncSeeding(async (context, _, cancellationToken) =>
         {
-            foreach (var seeder in seeders)
-            {
-                await seeder.SeedAsync(context);
-            }
+           await new Seeder().SeedAsync(context);
         });
         return optionsBuilder;
     }

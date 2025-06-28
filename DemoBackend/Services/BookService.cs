@@ -1,19 +1,33 @@
 using DemoBackend.Database;
 using DemoBackend.Database.Entities;
+using DemoBackend.Models.Authors;
+using DemoBackend.Models.Books;
 using Microsoft.EntityFrameworkCore;
 
 namespace DemoBackend.Services;
 
 public class BookService(ApplicationDbContext db) : IBookService
 {
-    public async Task<IEnumerable<Book>> GetAllBooksAsync()
+    public async Task<List<BookDetailsResponseModel>> GetAllBooksAsync()
     {
-        return await db.Books.ToListAsync();
+        return await db.Books.Include(e => e.Authors).Select(e => new BookDetailsResponseModel()
+        {
+            Id = e.Id.ToString(),
+            Title = e.Title,
+            Authors = e.Authors.Select(e => new AuthorResponseModel() { Name = e.Name, Id = e.Id.ToString() })
+        }).ToListAsync();
     }
 
-    public async Task<Book?> GetBookByIdAsync(Guid id)
+    public async Task<BookDetailsResponseModel?> GetBookByIdAsync(Guid id)
     {
-        return await db.Books.FirstOrDefaultAsync(b => b.Id == id);
+        var entity = await db.Books.Include(e => e.Authors).FirstOrDefaultAsync(b => b.Id == id);
+        if (entity == null) return null;
+        return new BookDetailsResponseModel()
+        {
+            Id = entity.Id.ToString(),
+            Title = entity.Title,
+            Authors = entity.Authors.Select(e => new AuthorResponseModel() { Name = e.Name, Id = e.Id.ToString() })
+        };
     }
 
     public async Task<Book> CreateBookAsync(Book book)

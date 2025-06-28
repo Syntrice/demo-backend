@@ -3,28 +3,43 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DemoBackend.Database.Seeders;
 
-public class Seeder<TEntity>(List<TEntity> seedData) : ISeeder
-    where TEntity : class, IEntity
+public class Seeder : ISeeder
 {
-    public Seeder() : this([])
+    private readonly List<Author> _authors;
+    private readonly List<Book> _books;
+
+    public Seeder()
     {
+        _authors =
+        [
+            new Author { Id = Guid.NewGuid(), Name = "George Orwell" },
+            new Author { Id = Guid.NewGuid(), Name = "Harper Lee" },
+            new Author { Id = Guid.NewGuid(), Name = "F. Scott Fitzgerald" }
+        ];
+
+        _books =
+        [
+            new Book { Id = Guid.NewGuid(), Title = "1984", Authors = [_authors[0]] },
+            new Book { Id = Guid.NewGuid(), Title = "To Kill a Mockingbird", Authors = [_authors[1]] },
+            new Book { Id = Guid.NewGuid(), Title = "The Great Gatsby", Authors = [_authors[2]] }
+        ];
     }
 
     public void Seed(DbContext context)
     {
-        if (!context.Set<TEntity>().Any())
-        {
-            context.AddRange(seedData);
-            context.SaveChanges();
-        }
+        if (context.Set<Author>().Any()) return;
+        context.AddRange(_authors);
+        if (context.Set<Book>().Any()) return;
+        context.AddRange(_books);
+        context.SaveChanges();
     }
 
     public async Task SeedAsync(DbContext context)
     {
-        if (!context.Set<TEntity>().Any())
-        {
-            context.AddRange(seedData);
-            await context.SaveChangesAsync();
-        }
+        if (context.Set<Author>().Any()) return;
+        context.AddRange(_authors);
+        if (context.Set<Book>().Any()) return;
+        context.AddRange(_books);
+        await context.SaveChangesAsync();
     }
 }

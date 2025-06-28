@@ -10,45 +10,47 @@ namespace DemoBackend.Controllers
     public class AuthorController(IAuthorService authorService) : ControllerBase
     {
         [HttpGet]
-        public IActionResult GetAllAuthors()
+        public async Task<IActionResult> GetAllAuthors()
         {
-            return Ok(authorService.GetAllAuthors());
+            var authors = await authorService.GetAllAuthorsAsync();
+            return Ok(authors);
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetAuthorById(Guid id)
+        public async Task<IActionResult> GetAuthorById(Guid id)
         {
-            var author = authorService.GetAuthorById(id);
+            var author = await authorService.GetAuthorByIdAsync(id);
             if (author == null)
             {
                 return NotFound();
             }
+
             return Ok(author);
         }
 
         [HttpPost]
-        public IActionResult AddAuthor(Author author)
+        public async Task<IActionResult> CreateAuthor(Author author)
         {
-            authorService.AddAuthor(author);
+            await authorService.CreateAuthorAsync(author);
             return CreatedAtAction(nameof(GetAuthorById), new { id = author.Id }, author);
         }
 
         [HttpPut("{id}")]
-        public IActionResult UpdateAuthor(Guid id, Author author)
+        public async Task<IActionResult> UpdateAuthor(Guid id, Author author)
         {
             if (id != author.Id)
             {
                 return BadRequest();
             }
 
-            authorService.UpdateAuthor(author);
+            await authorService.UpdateAuthorAsync(author);
             return NoContent();
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteAuthor(Guid id)
+        public async Task<IActionResult> DeleteAuthor(Guid id)
         {
-            authorService.DeleteAuthor(id);
+            await authorService.DeleteAuthorAsync(id);
             return NoContent();
         }
     }

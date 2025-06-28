@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace DemoBackend.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class BookController(IBookService bookService) : ControllerBase, IBookController
 {
     [HttpGet]

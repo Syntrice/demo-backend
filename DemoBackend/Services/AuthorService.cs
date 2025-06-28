@@ -3,40 +3,56 @@ using System.Collections.Generic;
 using System.Linq;
 using DemoBackend.Database;
 using DemoBackend.Database.Entities;
+using DemoBackend.Models.Authors;
+using DemoBackend.Models.Books;
+using Microsoft.EntityFrameworkCore;
 
 namespace DemoBackend.Services
 {
     public class AuthorService(ApplicationDbContext db) : IAuthorService
     {
-        public IEnumerable<Author> GetAllAuthors()
+        public async Task<List<AuthorDetailsResponseModel>> GetAllAuthorsAsync()
         {
-            return db.Authors.ToList();
+            return await db.Authors.Include((e => e.Books)).Select(e => new AuthorDetailsResponseModel()
+            {
+                Id = e.Id.ToString(),
+                Name = e.Name,
+                Books = e.Books.Select(e => new BookResponseModel() { Title = e.Title, Id = e.Id.ToString()})
+            }).ToListAsync();
         }
 
-        public Author? GetAuthorById(Guid id)
+        public async Task<AuthorDetailsResponseModel?> GetAuthorByIdAsync(Guid id)
         {
-            return db.Authors.Find(id);
+            var entity = await db.Authors.Include(e => e.Books).FirstOrDefaultAsync(e => e.Id == id);
+            if (entity == null) return null;
+            return new AuthorDetailsResponseModel()
+            {
+                Id = entity.Id.ToString(),
+                Name = entity.Name,
+                Books = entity.Books.Select(e => new BookResponseModel() { Title = e.Title, Id = e.Id.ToString() })
+            };
         }
 
-        public void AddAuthor(Author author)
+        public async Task<Author> CreateAuthorAsync(Author author)
         {
             db.Authors.Add(author);
-            db.SaveChanges();
+            await db.SaveChangesAsync();
+            return author;
         }
 
-        public void UpdateAuthor(Author author)
+        public async Task UpdateAuthorAsync(Author author)
         {
             db.Authors.Update(author);
-            db.SaveChanges();
+            await db.SaveChangesAsync();
         }
 
-        public void DeleteAuthor(Guid id)
+        public async Task DeleteAuthorAsync(Guid id)
         {
-            var author = db.Authors.Find(id);
+            var author = await db.Authors.FirstOrDefaultAsync(a => a.Id == id);
             if (author != null)
             {
                 db.Authors.Remove(author);
-                db.SaveChanges();
+                await db.SaveChangesAsync();
             }
         }
     }

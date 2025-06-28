@@ -12,8 +12,15 @@ builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+if (connectionString == null)
+{
+    throw new InvalidOperationException("No connection string configured");
+}
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseInMemoryDatabase(databaseName: "DemoBackend").SeedDatabase());
+    options.UseSqlServer(connectionString).SeedDatabase());
 
 builder.Services.AddScoped<IBookService, BookService>();
 

@@ -1,7 +1,31 @@
-﻿services:
+﻿name: demobackend
+services:
   demobackend:
     image: demobackend
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=mssql,1433;Database=DemoBackend;User Id=sa;Password=${DB_PASSWORD};TrustServerCertificate=True;
     build:
       context: .
       dockerfile: DemoBackend/Dockerfile
-
+    ports:
+      - 8200:5032
+      - 8201:7178
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    hostname: demobackend
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=${DB_PASSWORD}
+      - MSSQL_PID=Express
+      - MSSQL_BACKUP_DIR=/var/opt/mssql/backups
+      - MSSQL_LCID=1033
+      - TZ=Etc/UTC
+    ports:
+      - 14330:1433
+    volumes:
+      - ./data/mssql/backups:/var/opt/mssql/backups
+      - ./data/mssql/data:/var/opt/mssql/data
+      - ./data/mssql/log:/var/opt/mssql/log
+networks:
+  default:
+    name: demobackend

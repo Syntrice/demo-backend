@@ -9,17 +9,9 @@ public static class SeedData
 {
     // Create seed data for books, which should correspond to Book entity,
     // So they should have a string Title and string Author fields
-
-    public static void SeedBooks(DbContext context)
-    {
-        if (!context.Set<Book>().Any())
-        {
-            context.Set<Book>().AddRange(
-                new Book { Id = Guid.NewGuid(), Title = "1984", Author = "George Orwell" },
-                new Book { Id = Guid.NewGuid(), Title = "To Kill a Mockingbird", Author = "Harper Lee" },
-                new Book { Id = Guid.NewGuid(), Title = "The Great Gatsby", Author = "F. Scott Fitzgerald" }
-            );
-            context.SaveChanges();
-        }
-    }
+    public static readonly List<Book> Books = [
+        new Book { Id = Guid.NewGuid(), Title = "1984", Author = "George Orwell" },
+        new Book { Id = Guid.NewGuid(), Title = "To Kill a Mockingbird", Author = "Harper Lee" },
+        new Book { Id = Guid.NewGuid(), Title = "The Great Gatsby", Author = "F. Scott Fitzgerald" }
+    ];
 }

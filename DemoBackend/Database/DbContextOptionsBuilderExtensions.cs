@@ -9,12 +9,13 @@ public static class DbContextOptionsBuilderExtensions
     {
         optionsBuilder.UseSeeding((context, _) =>
         {
-            SeedData.SeedBooks(context);
+            context.AddRange(SeedData.Books);
+            context.SaveChanges();
         });
         optionsBuilder.UseAsyncSeeding(async (context, _, cancellationToken) =>
         {
-            SeedData.SeedBooks(context);
-            await Task.CompletedTask;
+            context.AddRange(SeedData.Books);
+            await context.SaveChangesAsync(cancellationToken);
         });
         return optionsBuilder;
     }

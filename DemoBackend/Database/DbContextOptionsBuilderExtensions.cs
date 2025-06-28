@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace DemoBackend.Database;
 
@@ -8,11 +9,12 @@ public static class DbContextOptionsBuilderExtensions
     {
         optionsBuilder.UseSeeding((context, _) =>
         {
-            // Call upon the SeedData static class here to seed the database
+            SeedData.SeedBooks(context);
         });
         optionsBuilder.UseAsyncSeeding(async (context, _, cancellationToken) =>
         {
-            // Call upon the SeedData static class here to seed the database
+            SeedData.SeedBooks(context);
+            await Task.CompletedTask;
         });
         return optionsBuilder;
     }

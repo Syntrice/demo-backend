@@ -1,4 +1,6 @@
 using DemoBackend.Models.Books;
+using DemoBackend.Models.Books.Requests;
+using DemoBackend.Models.Books.Responses;
 
 namespace DemoBackend.Services;
 
@@ -9,4 +11,5 @@ public interface IBookService
     Task<BookDetailsResponseModel> CreateBookAsync(BookRequestModel model);
     Task UpdateBookAsync(Guid id, BookRequestModel model);
     Task DeleteBookAsync(Guid id);
+    Task<List<BookDetailsResponseModel>> GetAllBooksByAuthorIdAsync(Guid authorId);
 }

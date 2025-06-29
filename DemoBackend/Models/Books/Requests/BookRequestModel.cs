@@ -1,4 +1,4 @@
-namespace DemoBackend.Models.Books;
+namespace DemoBackend.Models.Books.Requests;
 
 public class BookRequestModel
 {

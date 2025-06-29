@@ -4,7 +4,10 @@ using System.Linq;
 using DemoBackend.Database;
 using DemoBackend.Database.Entities;
 using DemoBackend.Models.Authors;
+using DemoBackend.Models.Authors.Requests;
+using DemoBackend.Models.Authors.Responses;
 using DemoBackend.Models.Books;
+using DemoBackend.Models.Books.Responses;
 using Microsoft.EntityFrameworkCore;
 
 namespace DemoBackend.Services

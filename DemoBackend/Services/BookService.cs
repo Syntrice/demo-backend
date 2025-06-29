@@ -1,6 +1,9 @@
 using DemoBackend.Database;
 using DemoBackend.Models.Authors;
+using DemoBackend.Models.Authors.Responses;
 using DemoBackend.Models.Books;
+using DemoBackend.Models.Books.Requests;
+using DemoBackend.Models.Books.Responses;
 using Microsoft.EntityFrameworkCore;
 
 namespace DemoBackend.Services;
@@ -32,19 +35,19 @@ public class BookService(ApplicationDbContext db) : IBookService
     public async Task<BookDetailsResponseModel> CreateBookAsync(BookRequestModel model)
     {
         var authors = await db.Authors
-                              .Where(a => model.AuthorIds.Contains(a.Id))
-                              .ToListAsync();
+            .Where(a => model.AuthorIds.Contains(a.Id))
+            .ToListAsync();
 
         var book = new Database.Entities.Book { Title = model.Title, Authors = authors };
         db.Books.Add(book);
         await db.SaveChangesAsync();
         return new BookDetailsResponseModel
         {
-            Id      = book.Id.ToString(),
-            Title   = book.Title,
+            Id = book.Id.ToString(),
+            Title = book.Title,
             Authors = authors.Select(a => new AuthorResponseModel
             {
-                Id   = a.Id.ToString(),
+                Id = a.Id.ToString(),
                 Name = a.Name
             })
         };
@@ -53,14 +56,14 @@ public class BookService(ApplicationDbContext db) : IBookService
     public async Task UpdateBookAsync(Guid id, BookRequestModel model)
     {
         var book = await db.Books
-                           .Include(b => b.Authors)
-                           .FirstOrDefaultAsync(b => b.Id == id);
+            .Include(b => b.Authors)
+            .FirstOrDefaultAsync(b => b.Id == id);
         if (book is null) return;
 
         book.Title = model.Title;
         book.Authors = await db.Authors
-                               .Where(a => model.AuthorIds.Contains(a.Id))
-                               .ToListAsync();
+            .Where(a => model.AuthorIds.Contains(a.Id))
+            .ToListAsync();
         await db.SaveChangesAsync();
     }
 
@@ -72,5 +75,16 @@ public class BookService(ApplicationDbContext db) : IBookService
             db.Books.Remove(book);
             await db.SaveChangesAsync();
         }
+    }
+
+    public async Task<List<BookDetailsResponseModel>> GetAllBooksByAuthorIdAsync(Guid authorId)
+    {
+        return await db.Books.Include(b => b.Authors).Where(b => b.Authors.Any(a => a.Id == authorId))
+            .Select(b => new BookDetailsResponseModel()
+            {
+                Id = b.Id.ToString(),
+                Title = b.Title,
+                Authors = b.Authors.Select(e => new AuthorResponseModel() { Name = e.Name, Id = e.Id.ToString() })
+            }).ToListAsync();
     }
 }

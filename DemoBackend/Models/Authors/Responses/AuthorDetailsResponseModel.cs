@@ -1,6 +1,6 @@
-using DemoBackend.Models.Books;
+using DemoBackend.Models.Books.Responses;
 
-namespace DemoBackend.Models.Authors;
+namespace DemoBackend.Models.Authors.Responses;
 
 public class AuthorDetailsResponseModel
 {

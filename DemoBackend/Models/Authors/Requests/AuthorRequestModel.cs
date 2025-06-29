@@ -1,4 +1,4 @@
-namespace DemoBackend.Models.Authors;
+namespace DemoBackend.Models.Authors.Requests;
 
 public class AuthorRequestModel
 {

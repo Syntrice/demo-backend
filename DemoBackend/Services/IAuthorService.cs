@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using DemoBackend.Database.Entities;
 using DemoBackend.Models.Authors;
+using DemoBackend.Models.Authors.Requests;
+using DemoBackend.Models.Authors.Responses;
 
 namespace DemoBackend.Services
 {

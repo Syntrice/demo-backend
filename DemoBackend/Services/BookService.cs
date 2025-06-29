@@ -1,4 +1,6 @@
+using System.Linq;
 using DemoBackend.Database;
+using DemoBackend.Exceptions;
 using DemoBackend.Models.Authors;
 using DemoBackend.Models.Authors.Responses;
 using DemoBackend.Models.Books;
@@ -34,9 +36,14 @@ public class BookService(ApplicationDbContext db) : IBookService
 
     public async Task<BookDetailsResponseModel> CreateBookAsync(BookRequestModel model)
     {
+        var requestedIds = model.AuthorIds.Distinct().ToList();
+
         var authors = await db.Authors
-            .Where(a => model.AuthorIds.Contains(a.Id))
+            .Where(a => requestedIds.Contains(a.Id))
             .ToListAsync();
+
+        if (authors.Count != requestedIds.Count)
+            throw new ServiceValidationException("One or more author IDs do not exist.");
 
         var book = new Database.Entities.Book { Title = model.Title, Authors = authors };
         db.Books.Add(book);
@@ -60,10 +67,17 @@ public class BookService(ApplicationDbContext db) : IBookService
             .FirstOrDefaultAsync(b => b.Id == id);
         if (book is null) return;
 
-        book.Title = model.Title;
-        book.Authors = await db.Authors
-            .Where(a => model.AuthorIds.Contains(a.Id))
+        var requestedIds = model.AuthorIds.Distinct().ToList();
+
+        var authors = await db.Authors
+            .Where(a => requestedIds.Contains(a.Id))
             .ToListAsync();
+
+        if (authors.Count != requestedIds.Count)
+            throw new ArgumentException("One or more author IDs do not exist.");
+
+        book.Title = model.Title;
+        book.Authors = authors;
         await db.SaveChangesAsync();
     }
 

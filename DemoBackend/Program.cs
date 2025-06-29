@@ -30,7 +30,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
     app.UseSwagger();
     app.UseSwaggerUI();
-    await app.DropAndCreateDatabaseAsync();
+    await app.EnsureDatabaseCreatedAsync();
 }
 
 app.UseHttpsRedirection();

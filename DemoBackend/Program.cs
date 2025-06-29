@@ -1,4 +1,6 @@
+using DemoBackend;
 using DemoBackend.Database;
+using DemoBackend.Extensions;
 using DemoBackend.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,28 +13,19 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-
-if (connectionString == null)
-{
-    throw new InvalidOperationException("No connection string configured");
-}
-
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString).SeedDatabase());
+builder.SetupApplicationDbContext();
 
 builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IAuthorService, AuthorService>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
     app.UseSwagger();
     app.UseSwaggerUI();
+    await app.DropAndCreateDatabaseAsync();
 }
 
 app.UseHttpsRedirection();
@@ -41,10 +34,5 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-using (var scope = app.Services.CreateScope())
-{
-    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    dbContext.Database.EnsureCreated();
-}
 
 app.Run();

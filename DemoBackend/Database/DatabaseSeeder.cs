@@ -1,14 +1,14 @@
 using DemoBackend.Database.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace DemoBackend.Database.Seeders;
+namespace DemoBackend.Database;
 
-public class Seeder : ISeeder
+public class DatabaseSeeder
 {
     private readonly List<Author> _authors;
     private readonly List<Book> _books;
 
-    public Seeder()
+    public DatabaseSeeder()
     {
         _authors =
         [

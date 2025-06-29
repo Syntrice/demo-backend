@@ -9,8 +9,8 @@ namespace DemoBackend.Services
     {
         Task<List<AuthorDetailsResponseModel>> GetAllAuthorsAsync();
         Task<AuthorDetailsResponseModel?> GetAuthorByIdAsync(Guid id);
-        Task<Author> CreateAuthorAsync(Author author);
-        Task UpdateAuthorAsync(Author author);
+        Task<AuthorResponseModel> CreateAuthorAsync(AuthorRequestModel model);
+        Task UpdateAuthorAsync(Guid id, AuthorRequestModel model);
         Task DeleteAuthorAsync(Guid id);
     }
 }

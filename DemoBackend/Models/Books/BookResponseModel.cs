@@ -4,6 +4,6 @@ namespace DemoBackend.Models.Books;
 
 public class BookResponseModel
 {
-    public string Id { get; set; }
-    public string Title { get; set; }
+    public string Id { get; set; } = string.Empty;
+    public string Title { get; set; } = string.Empty;
 }

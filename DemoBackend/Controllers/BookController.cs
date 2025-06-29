@@ -1,7 +1,6 @@
 using DemoBackend.Services;
-using DemoBackend.Database.Entities;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
+using DemoBackend.Models.Books;
 
 namespace DemoBackend.Controllers;
 
@@ -25,21 +24,16 @@ public class BookController(IBookService bookService) : ControllerBase, IBookCon
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateBook([FromBody] Book book)
+    public async Task<IActionResult> CreateBook([FromBody] BookRequestModel model)
     {
-        var created = await bookService.CreateBookAsync(book);
+        var created = await bookService.CreateBookAsync(model);
         return CreatedAtAction(nameof(GetBookById), new { id = created.Id }, created);
     }
 
     [HttpPut("{id:guid}")]
-    public async Task<IActionResult> UpdateBook(Guid id, [FromBody] Book book)
+    public async Task<IActionResult> UpdateBook(Guid id, [FromBody] BookRequestModel model)
     {
-        if (id != book.Id)
-        {
-            return BadRequest();
-        }
-
-        await bookService.UpdateBookAsync(book);
+        await bookService.UpdateBookAsync(id, model);
         return NoContent();
     }
 

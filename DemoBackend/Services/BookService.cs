@@ -1,5 +1,4 @@
 using DemoBackend.Database;
-using DemoBackend.Database.Entities;
 using DemoBackend.Models.Authors;
 using DemoBackend.Models.Books;
 using Microsoft.EntityFrameworkCore;
@@ -30,16 +29,38 @@ public class BookService(ApplicationDbContext db) : IBookService
         };
     }
 
-    public async Task<Book> CreateBookAsync(Book book)
+    public async Task<BookDetailsResponseModel> CreateBookAsync(BookRequestModel model)
     {
+        var authors = await db.Authors
+                              .Where(a => model.AuthorIds.Contains(a.Id))
+                              .ToListAsync();
+
+        var book = new Database.Entities.Book { Title = model.Title, Authors = authors };
         db.Books.Add(book);
         await db.SaveChangesAsync();
-        return book;
+        return new BookDetailsResponseModel
+        {
+            Id      = book.Id.ToString(),
+            Title   = book.Title,
+            Authors = authors.Select(a => new AuthorResponseModel
+            {
+                Id   = a.Id.ToString(),
+                Name = a.Name
+            })
+        };
     }
 
-    public async Task UpdateBookAsync(Book book)
+    public async Task UpdateBookAsync(Guid id, BookRequestModel model)
     {
-        db.Books.Update(book);
+        var book = await db.Books
+                           .Include(b => b.Authors)
+                           .FirstOrDefaultAsync(b => b.Id == id);
+        if (book is null) return;
+
+        book.Title = model.Title;
+        book.Authors = await db.Authors
+                               .Where(a => model.AuthorIds.Contains(a.Id))
+                               .ToListAsync();
         await db.SaveChangesAsync();
     }
 

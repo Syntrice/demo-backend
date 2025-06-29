@@ -17,32 +17,39 @@ namespace DemoBackend.Services
             {
                 Id = e.Id.ToString(),
                 Name = e.Name,
-                Books = e.Books.Select(e => new BookResponseModel() { Title = e.Title, Id = e.Id.ToString()})
+                Books = e.Books.Select(e => new BookResponseModel() { Title = e.Title, Id = e.Id.ToString() })
             }).ToListAsync();
         }
 
         public async Task<AuthorDetailsResponseModel?> GetAuthorByIdAsync(Guid id)
         {
-            var entity = await db.Authors.Include(e => e.Books).FirstOrDefaultAsync(e => e.Id == id);
-            if (entity == null) return null;
+            var author = await db.Authors.Include(e => e.Books).FirstOrDefaultAsync(e => e.Id == id);
+            if (author == null) return null;
             return new AuthorDetailsResponseModel()
             {
-                Id = entity.Id.ToString(),
-                Name = entity.Name,
-                Books = entity.Books.Select(e => new BookResponseModel() { Title = e.Title, Id = e.Id.ToString() })
+                Id = author.Id.ToString(),
+                Name = author.Name,
+                Books = author.Books.Select(e => new BookResponseModel() { Title = e.Title, Id = e.Id.ToString() })
             };
         }
 
-        public async Task<Author> CreateAuthorAsync(Author author)
+        public async Task<AuthorResponseModel> CreateAuthorAsync(AuthorRequestModel model)
         {
+            var author = new Author { Id = Guid.NewGuid(), Name = model.Name };
             db.Authors.Add(author);
             await db.SaveChangesAsync();
-            return author;
+            return new AuthorResponseModel()
+            {
+                Id = author.Id.ToString(),
+                Name = author.Name,
+            };
         }
 
-        public async Task UpdateAuthorAsync(Author author)
+        public async Task UpdateAuthorAsync(Guid id, AuthorRequestModel model)
         {
-            db.Authors.Update(author);
+            var author = await db.Authors.FirstOrDefaultAsync(a => a.Id == id);
+            if (author == null) return;
+            author.Name = model.Name;
             await db.SaveChangesAsync();
         }
 

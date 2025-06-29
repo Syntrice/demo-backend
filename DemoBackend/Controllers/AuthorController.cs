@@ -1,13 +1,13 @@
 using System;
 using Microsoft.AspNetCore.Mvc;
 using DemoBackend.Services;
-using DemoBackend.Database.Entities;
+using DemoBackend.Models.Authors;
 
 namespace DemoBackend.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class AuthorController(IAuthorService authorService) : ControllerBase
+    public class AuthorController(IAuthorService authorService) : ControllerBase, IAuthorController
     {
         [HttpGet]
         public async Task<IActionResult> GetAllAuthors()
@@ -29,21 +29,16 @@ namespace DemoBackend.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateAuthor(Author author)
+        public async Task<IActionResult> CreateAuthor([FromBody] AuthorRequestModel model)
         {
-            await authorService.CreateAuthorAsync(author);
+            var author = await authorService.CreateAuthorAsync(model);
             return CreatedAtAction(nameof(GetAuthorById), new { id = author.Id }, author);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateAuthor(Guid id, Author author)
+        [HttpPut("{id:guid}")]
+        public async Task<IActionResult> UpdateAuthor(Guid id, [FromBody] AuthorRequestModel model)
         {
-            if (id != author.Id)
-            {
-                return BadRequest();
-            }
-
-            await authorService.UpdateAuthorAsync(author);
+            await authorService.UpdateAuthorAsync(id, model);
             return NoContent();
         }
 

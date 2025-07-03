@@ -1,10 +1,8 @@
-using System;
-using Microsoft.AspNetCore.Mvc;
-using DemoBackend.Services;
-using DemoBackend.Models.Authors;
+using DemoBackend.Common.Results;
 using DemoBackend.Models.Authors.Requests;
-using DemoBackend.Models.Errors;
+using DemoBackend.Services;
 using FluentValidation;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DemoBackend.Controllers
 {
@@ -20,19 +18,14 @@ namespace DemoBackend.Controllers
         public async Task<IActionResult> GetAllAuthors()
         {
             var authors = await authorService.GetAllAuthorsAsync();
-            return Ok(authors);
+            return Ok(authors.Value);
         }
 
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetAuthorById(Guid id)
         {
-            var author = await authorService.GetAuthorByIdAsync(id);
-            if (author == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(author);
+            var result = await authorService.GetAuthorByIdAsync(id);
+            return result.IsFailure ? result.ToProblemDetailsResponse(this) : Ok(result.Value);
         }
 
         [HttpPost]
@@ -41,11 +34,12 @@ namespace DemoBackend.Controllers
             var validationResult = await authorRequestValidator.ValidateAsync(model);
             if (!validationResult.IsValid)
             {
-                return BadRequest(new ErrorResponseModel()
-                    { Errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList()});
+                return validationResult.ToProblemDetailsResponse(this);
             }
 
-            var author = await authorService.CreateAuthorAsync(model);
+            var result = await authorService.CreateAuthorAsync(model);
+            if (result.IsFailure) return result.ToProblemDetailsResponse(this);
+            var author = result.Value;
             return CreatedAtAction(nameof(GetAuthorById), new { id = author.Id }, author);
         }
 
@@ -55,19 +49,18 @@ namespace DemoBackend.Controllers
             var validationResult = await authorRequestValidator.ValidateAsync(model);
             if (!validationResult.IsValid)
             {
-                return BadRequest(new ErrorResponseModel()
-                    { Errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList()});
+                return validationResult.ToProblemDetailsResponse(this);
             }
 
-            await authorService.UpdateAuthorAsync(id, model);
-            return NoContent();
+            var result = await authorService.UpdateAuthorAsync(id, model);
+            return result.IsFailure ? result.ToProblemDetailsResponse(this) : NoContent();
         }
 
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> DeleteAuthor(Guid id)
         {
-            await authorService.DeleteAuthorAsync(id);
-            return NoContent();
+            var result = await authorService.DeleteAuthorAsync(id);
+            return result.IsFailure ? result.ToProblemDetailsResponse(this) : NoContent();
         }
 
         [HttpGet("{id:guid}/books")]

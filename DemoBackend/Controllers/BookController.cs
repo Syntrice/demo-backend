@@ -1,9 +1,8 @@
-using DemoBackend.Services;
-using Microsoft.AspNetCore.Mvc;
-using DemoBackend.Models.Books;
+using DemoBackend.Common.Results;
 using DemoBackend.Models.Books.Requests;
-using DemoBackend.Models.Errors;
+using DemoBackend.Services;
 using FluentValidation;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DemoBackend.Controllers;
 
@@ -15,30 +14,31 @@ public class BookController(IBookService bookService, IValidator<BookRequestMode
     [HttpGet]
     public async Task<IActionResult> GetAllBooks()
     {
-        var books = await bookService.GetAllBooksAsync();
-        return Ok(books);
+        var result = await bookService.GetAllBooksAsync();
+        return Ok(result.Value);
     }
 
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetBookById(Guid id)
     {
-        var book = await bookService.GetBookByIdAsync(id);
-        if (book == null) return NotFound();
-        return Ok(book);
+        var result = await bookService.GetBookByIdAsync(id);
+        if (result.IsFailure) return result.ToProblemDetailsResponse((this));
+        return Ok(result.Value);
     }
 
     [HttpPost]
     public async Task<IActionResult> CreateBook([FromBody] BookRequestModel model)
     {
         var validationResult = await bookRequestValidator.ValidateAsync(model);
-        
+
         if (!validationResult.IsValid)
         {
-            return BadRequest(new ErrorResponseModel()
-                { Errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList() });
+            return validationResult.ToProblemDetailsResponse(this);
         }
 
-        var created = await bookService.CreateBookAsync(model);
+        var result = await bookService.CreateBookAsync(model);
+        if (result.IsFailure) return result.ToProblemDetailsResponse(this);
+        var created = result.Value;
         return CreatedAtAction(nameof(GetBookById), new { id = created.Id }, created);
     }
 
@@ -48,18 +48,19 @@ public class BookController(IBookService bookService, IValidator<BookRequestMode
         var validationResult = await bookRequestValidator.ValidateAsync(model);
         if (!validationResult.IsValid)
         {
-            return BadRequest(new ErrorResponseModel()
-                { Errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList() });
+            return validationResult.ToProblemDetailsResponse(this);
         }
 
-        await bookService.UpdateBookAsync(id, model);
+        var result = await bookService.UpdateBookAsync(id, model);
+        if (result.IsFailure) return result.ToProblemDetailsResponse(this);
         return NoContent();
     }
 
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> DeleteBook(Guid id)
     {
-        await bookService.DeleteBookAsync(id);
+        var result = await bookService.DeleteBookAsync(id);
+        if (result.IsFailure) return result.ToProblemDetailsResponse(this);
         return NoContent();
     }
 }

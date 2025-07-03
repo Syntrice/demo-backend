@@ -1,12 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using DemoBackend.Common.Results;
 using DemoBackend.Database;
 using DemoBackend.Database.Entities;
-using DemoBackend.Models.Authors;
 using DemoBackend.Models.Authors.Requests;
 using DemoBackend.Models.Authors.Responses;
-using DemoBackend.Models.Books;
 using DemoBackend.Models.Books.Responses;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,7 +10,7 @@ namespace DemoBackend.Services
 {
     public class AuthorService(ApplicationDbContext db) : IAuthorService
     {
-        public async Task<List<AuthorDetailsResponseModel>> GetAllAuthorsAsync()
+        public async Task<Result<List<AuthorDetailsResponseModel>>> GetAllAuthorsAsync()
         {
             return await db.Authors.Include((e => e.Books)).Select(e => new AuthorDetailsResponseModel()
             {
@@ -24,10 +20,10 @@ namespace DemoBackend.Services
             }).ToListAsync();
         }
 
-        public async Task<AuthorDetailsResponseModel?> GetAuthorByIdAsync(Guid id)
+        public async Task<Result<AuthorDetailsResponseModel>> GetAuthorByIdAsync(Guid id)
         {
             var author = await db.Authors.Include(e => e.Books).FirstOrDefaultAsync(e => e.Id == id);
-            if (author == null) return null;
+            if (author == null) return Error.NotFound($"Author with id '{id}' was not found.");
             return new AuthorDetailsResponseModel()
             {
                 Id = author.Id.ToString(),
@@ -36,7 +32,7 @@ namespace DemoBackend.Services
             };
         }
 
-        public async Task<AuthorResponseModel> CreateAuthorAsync(AuthorRequestModel model)
+        public async Task<Result<AuthorResponseModel>> CreateAuthorAsync(AuthorRequestModel model)
         {
             var author = new Author { Id = Guid.NewGuid(), Name = model.Name };
             db.Authors.Add(author);
@@ -48,22 +44,26 @@ namespace DemoBackend.Services
             };
         }
 
-        public async Task UpdateAuthorAsync(Guid id, AuthorRequestModel model)
+        public async Task<Result<Unit>> UpdateAuthorAsync(Guid id, AuthorRequestModel model)
         {
             var author = await db.Authors.FirstOrDefaultAsync(a => a.Id == id);
-            if (author == null) return;
+            if (author is null)
+                return Error.NotFound($"Author with id '{id}' was not found.");
+
             author.Name = model.Name;
             await db.SaveChangesAsync();
+            return Unit.Value;
         }
 
-        public async Task DeleteAuthorAsync(Guid id)
+        public async Task<Result<Unit>> DeleteAuthorAsync(Guid id)
         {
             var author = await db.Authors.FirstOrDefaultAsync(a => a.Id == id);
-            if (author != null)
-            {
-                db.Authors.Remove(author);
-                await db.SaveChangesAsync();
-            }
+            if (author is null)
+                return Error.NotFound($"Author with id '{id}' was not found.");
+
+            db.Authors.Remove(author);
+            await db.SaveChangesAsync();
+            return Unit.Value;
         }
     }
 }

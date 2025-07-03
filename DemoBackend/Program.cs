@@ -1,18 +1,15 @@
 using DemoBackend;
-using DemoBackend.Database;
-using DemoBackend.Exceptions;
 using DemoBackend.Extensions;
 using DemoBackend.Services;
 using FluentValidation;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers(options => { options.Filters.Add<ServiceValidationExceptionFilter>(); });
+builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+builder.Services.AddProblemDetails();
 builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -33,6 +30,8 @@ if (app.Environment.IsDevelopment())
     await app.EnsureDatabaseCreatedAsync();
 }
 
+app.UseExceptionHandler(); // Handles unhandled exceptions
+app.UseStatusCodePages(); // Handles non-successful status codes
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

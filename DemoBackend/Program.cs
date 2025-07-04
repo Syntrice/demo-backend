@@ -9,7 +9,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddProblemDetails();
 builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -39,8 +38,6 @@ if (app.Environment.IsDevelopment())
     await app.EnsureDatabaseCreatedAsync();
 }
 
-app.UseExceptionHandler(); // Handles unhandled exceptions
-app.UseStatusCodePages(); // Handles non-successful status codes
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

@@ -1,5 +1,5 @@
-using DemoBackend;
-using DemoBackend.Extensions;
+using DemoBackend.Common.Mapping;
+using DemoBackend.Database;
 using DemoBackend.Services;
 using FluentValidation;
 
@@ -13,9 +13,17 @@ builder.Services.AddProblemDetails();
 builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.AddMapper();
-builder.SetupApplicationDbContext();
 
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+if (connectionString == null)
+{
+    throw new InvalidOperationException("No connection string configured");
+}
+
+builder.Services.AddApplicationDbContext(connectionString);
+
+builder.Services.AddMappersFromAssemblyContaining<Program>();
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
 builder.Services.AddScoped<IBookService, BookService>();

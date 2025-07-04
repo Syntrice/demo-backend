@@ -1,35 +1,27 @@
+using DemoBackend.Common.Mapping;
 using DemoBackend.Common.Results;
 using DemoBackend.Database;
 using DemoBackend.Database.Entities;
 using DemoBackend.Models.Authors.Requests;
 using DemoBackend.Models.Authors.Responses;
-using DemoBackend.Models.Books.Responses;
 using Microsoft.EntityFrameworkCore;
 
 namespace DemoBackend.Services
 {
-    public class AuthorService(ApplicationDbContext db) : IAuthorService
+    public class AuthorService(ApplicationDbContext db, IMapper mapper) : IAuthorService
     {
         public async Task<Result<List<AuthorDetailsResponseModel>>> GetAllAuthorsAsync()
         {
-            return await db.Authors.Include((e => e.Books)).Select(e => new AuthorDetailsResponseModel()
-            {
-                Id = e.Id.ToString(),
-                Name = e.Name,
-                Books = e.Books.Select(e => new BookResponseModel() { Title = e.Title, Id = e.Id.ToString() })
-            }).ToListAsync();
+            return await mapper.Map<Author, AuthorDetailsResponseModel>(db.Authors.Include((e => e.Books)))
+                .ToListAsync();
         }
 
         public async Task<Result<AuthorDetailsResponseModel>> GetAuthorByIdAsync(Guid id)
         {
-            var author = await db.Authors.Include(e => e.Books).FirstOrDefaultAsync(e => e.Id == id);
-            if (author == null) return Error.NotFound($"Author with id '{id}' was not found.");
-            return new AuthorDetailsResponseModel()
-            {
-                Id = author.Id.ToString(),
-                Name = author.Name,
-                Books = author.Books.Select(e => new BookResponseModel() { Title = e.Title, Id = e.Id.ToString() })
-            };
+            var entity = await mapper.Map<Author, AuthorDetailsResponseModel>(db.Authors.Include(e => e.Books))
+                .FirstOrDefaultAsync(e => e.Id == id);
+            if (entity == null) return Error.NotFound($"Author with id '{id}' was not found.");
+            return entity;
         }
 
         public async Task<Result<AuthorResponseModel>> CreateAuthorAsync(AuthorRequestModel model)
@@ -37,11 +29,7 @@ namespace DemoBackend.Services
             var author = new Author { Id = Guid.NewGuid(), Name = model.Name };
             db.Authors.Add(author);
             await db.SaveChangesAsync();
-            return new AuthorResponseModel()
-            {
-                Id = author.Id.ToString(),
-                Name = author.Name,
-            };
+            return mapper.Map<Author, AuthorResponseModel>(author);
         }
 
         public async Task<Result<Unit>> UpdateAuthorAsync(Guid id, AuthorRequestModel model)

@@ -13,6 +13,7 @@ builder.Services.AddProblemDetails();
 builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.AddMapper();
 builder.SetupApplicationDbContext();
 
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();

@@ -11,7 +11,7 @@ This demo REST API backend is built using ASP.NET Core and demonstrates the use 
 
 1. **Clone the repository**:
 ```bash
-git clone https://your-repo-url.git
+git clone https://github.com/Syntrice/demo-backend.git
 ```
 
 2. **Build the Docker images**:

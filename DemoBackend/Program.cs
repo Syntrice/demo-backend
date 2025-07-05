@@ -1,32 +1,28 @@
 using DemoBackend.Common.Mapping;
 using DemoBackend.Database;
+using DemoBackend.Database.Services;
 using DemoBackend.Services;
+using DemoBackend.Settings;
 using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-
-if (connectionString == null)
-{
-    throw new InvalidOperationException("No connection string configured");
-}
-
-builder.Services.AddApplicationDbContext(connectionString);
-
+builder.Services
+    .AddOptions<DatabaseSettings>()
+    .Bind(builder.Configuration.GetSection("DatabaseSettings"))
+    .ValidateDataAnnotations();
+builder.Services.AddDbContext<ApplicationDbContext>();
+builder.Services.AddHostedService<DatabaseMigrationService>();
 builder.Services.AddMappersFromAssemblyContaining<Program>();
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
-
+builder.Services.AddScoped<IDatabaseSeedingService, DatabaseSeedingService>();
 builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IAuthorService, AuthorService>();
+
 
 var app = builder.Build();
 
@@ -35,7 +31,6 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
     app.UseSwagger();
     app.UseSwaggerUI();
-    await app.EnsureDatabaseCreatedAsync();
 }
 
 app.UseHttpsRedirection();
@@ -43,6 +38,5 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
-
 
 app.Run();

@@ -4,7 +4,7 @@ services:
     image: demobackend
     container_name: api
     environment:
-      - ConnectionStrings__DefaultConnection=Server=postgres;Port=5432;Database=demobackend;User Id=sa;Password=${DB_PASSWORD};
+      - DatabaseSettings__ConnectionString=Server=postgres;Port=5432;Database=demobackend;User Id=sa;Password=${DB_PASSWORD};
       - ASPNETCORE_HTTP_PORTS=8080
     build:
       context: .

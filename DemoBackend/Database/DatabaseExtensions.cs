@@ -16,7 +16,7 @@ public static class DatabaseExtensions
     {
         services.AddDbContext<ApplicationDbContext>(options =>
         {
-            options.UseSqlServer(connectionString);
+            options.UseNpgsql(connectionString);
             var seeder = new DatabaseSeeder();
             options.UseSeeding((context, _) => { seeder.Seed(context); });
             options.UseAsyncSeeding(async (context, _, cancellationToken) => { await seeder.SeedAsync(context); });

@@ -1,11 +1,11 @@
 # Demo REST API Backend
 
-This demo REST API backend is built using ASP.NET Core and demonstrates the use of Docker, Docker Compose, and Microsoft SQL Server.
+This demo REST API backend is built using ASP.NET Core and demonstrates the use of Docker, Docker Compose, and PostgreSQL.
 
 ## Features
 - **ASP.NET Core**: Robust framework for building web APIs.
 - **Docker & Docker Compose**: Containerize and streamline your development and deployment.
-- **MSSQL Server**: Integrated SQL database for backend operations.
+- **PostgreSQL**: Integrated SQL database for backend operations.
 
 ## Getting Started
 

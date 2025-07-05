@@ -2,8 +2,9 @@
 services:
   demobackend:
     image: demobackend
+    container_name: api
     environment:
-      - ConnectionStrings__DefaultConnection=Server=mssql,1433;Database=DemoBackend;User Id=sa;Password=${DB_PASSWORD};TrustServerCertificate=True;
+      - ConnectionStrings__DefaultConnection=Server=postgres;Port=5432;Database=demobackend;User Id=sa;Password=${DB_PASSWORD};
       - ASPNETCORE_HTTP_PORTS=8080
     build:
       context: .
@@ -11,24 +12,20 @@ services:
     ports:
       - 64609:8080
     depends_on:
-      - mssql
-  mssql:
-    image: mcr.microsoft.com/mssql/server:2022-latest
-    hostname: demobackend
+      - postgres
+  postgres:
+    image: postgres:latest
+    container_name: postgres
     environment:
-      - ACCEPT_EULA=Y
-      - MSSQL_SA_PASSWORD=${DB_PASSWORD}
-      - MSSQL_PID=Express
-      - MSSQL_BACKUP_DIR=/var/opt/mssql/backups
-      - MSSQL_LCID=1033
-      - TZ=Etc/UTC
+      POSTGRES_USER: sa
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: demobackend
     ports:
-      - 64505:1433
+      - "5432:5432"
     volumes:
-      - mssql-data:/var/opt/mssql
-
+      - postgres-data:/var/lib/postgresql/data
 networks:
   default:
     name: demobackend
 volumes:
-  mssql-data:
+  postgres-data:

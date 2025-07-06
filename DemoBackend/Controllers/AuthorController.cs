@@ -67,7 +67,7 @@ namespace DemoBackend.Controllers
         public async Task<IActionResult> GetAuthorBooks(Guid id)
         {
             var books = await bookService.GetAllBooksByAuthorIdAsync(id);
-            return Ok(books);
+            return books.IsFailure ? books.ToProblemDetailsResponse(this) : Ok(books.Value);
         }
     }
 }

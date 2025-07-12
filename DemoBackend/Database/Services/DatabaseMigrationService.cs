@@ -8,6 +8,7 @@ public sealed class DatabaseMigrationService(
     {
         using var scope = serviceProvider.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        await dbContext.Database.EnsureDeletedAsync(ct);
         await dbContext.Database.EnsureCreatedAsync(ct);
     }
 

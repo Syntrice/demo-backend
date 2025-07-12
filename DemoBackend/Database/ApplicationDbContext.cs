@@ -15,6 +15,10 @@ public class ApplicationDbContext : DbContext
 
     public DbSet<Book> Books { get; set; }
     public DbSet<Author> Authors { get; set; }
+    public DbSet<User> Users { get; set; }
+    public DbSet<Auth> Auths { get; set; }
+    public DbSet<RefreshTokenFamily> RefreshTokenFamilies { get; set; }
+    public DbSet<RefreshToken> RefreshTokens { get; set; }
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options,
         IOptions<DatabaseSettings> databaseSettings, ILogger<ApplicationDbContext> logger, IConfiguration configuration,
@@ -35,9 +39,6 @@ public class ApplicationDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Book>()
-            .HasMany(b => b.Authors)
-            .WithMany(a => a.Books)
-            .UsingEntity(j => j.ToTable("BookAuthors"));
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
     }
 }

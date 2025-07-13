@@ -8,16 +8,28 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DemoBackend.Services;
 
+public interface IBookService
+{
+    Task<Result<List<BookDetailsResponseModel>>> GetAllBooksAsync();
+    Task<Result<BookDetailsResponseModel>> GetBookByIdAsync(Guid id);
+    Task<Result<BookDetailsResponseModel>> CreateBookAsync(BookRequestModel model);
+    Task<Result<Unit>> UpdateBookAsync(Guid id, BookRequestModel model);
+    Task<Result<Unit>> DeleteBookAsync(Guid id);
+    Task<Result<List<BookDetailsResponseModel>>> GetAllBooksByAuthorIdAsync(Guid authorId);
+}
+
 public class BookService(ApplicationDbContext db, IMapper mapper) : IBookService
 {
     public async Task<Result<List<BookDetailsResponseModel>>> GetAllBooksAsync()
     {
-        return await mapper.Map<Book, BookDetailsResponseModel>(db.Books.Include(e => e.Authors)).ToListAsync();
+        return await mapper.Map<Book, BookDetailsResponseModel>(db.Books.Include(e => e.Authors))
+            .ToListAsync();
     }
 
     public async Task<Result<BookDetailsResponseModel>> GetBookByIdAsync(Guid id)
     {
-        var entity = await mapper.Map<Book, BookDetailsResponseModel>(db.Books.Include(e => e.Authors))
+        var entity = await mapper
+            .Map<Book, BookDetailsResponseModel>(db.Books.Include(e => e.Authors))
             .FirstOrDefaultAsync(e => e.Id == id);
         if (entity == null) return Error.NotFound($"Book with id '{id}' was not found.");
         return entity;
@@ -74,7 +86,8 @@ public class BookService(ApplicationDbContext db, IMapper mapper) : IBookService
         return Unit.Value;
     }
 
-    public async Task<Result<List<BookDetailsResponseModel>>> GetAllBooksByAuthorIdAsync(Guid authorId)
+    public async Task<Result<List<BookDetailsResponseModel>>> GetAllBooksByAuthorIdAsync(
+        Guid authorId)
     {
         if (!await db.Authors.AnyAsync(a => a.Id == authorId))
         {

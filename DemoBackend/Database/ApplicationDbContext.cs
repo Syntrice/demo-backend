@@ -15,13 +15,14 @@ public class ApplicationDbContext : DbContext
 
     public DbSet<Book> Books { get; set; }
     public DbSet<Author> Authors { get; set; }
-    public DbSet<User> Users { get; set; }
-    public DbSet<Auth> Auths { get; set; }
+    public DbSet<UserProfile> UserProfiles { get; set; }
+    public DbSet<UserAccount> UserAccounts { get; set; }
     public DbSet<RefreshTokenFamily> RefreshTokenFamilies { get; set; }
     public DbSet<RefreshToken> RefreshTokens { get; set; }
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options,
-        IOptions<DatabaseSettings> databaseSettings, ILogger<ApplicationDbContext> logger, IConfiguration configuration,
+        IOptions<DatabaseSettings> databaseSettings, ILogger<ApplicationDbContext> logger,
+        IConfiguration configuration,
         IOptions<DatabaseSettings> settings, IDatabaseSeedingService seeder) : base(options)
     {
         _logger = logger;
@@ -34,7 +35,10 @@ public class ApplicationDbContext : DbContext
     {
         options.UseNpgsql(_settings.Value.ConnectionString);
         options.UseSeeding((context, _) => { _seeder.Seed(context); });
-        options.UseAsyncSeeding(async (context, _, cancellationToken) => { await _seeder.SeedAsync(context); });
+        options.UseAsyncSeeding(async (context, _, cancellationToken) =>
+        {
+            await _seeder.SeedAsync(context);
+        });
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

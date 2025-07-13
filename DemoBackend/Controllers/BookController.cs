@@ -8,8 +8,10 @@ namespace DemoBackend.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class BookController(IBookService bookService, IValidator<BookRequestModel> bookRequestValidator)
-    : ControllerBase, IBookController
+public class BookController(
+    IBookService bookService,
+    IValidator<BookRequestModel> bookRequestValidator)
+    : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetAllBooks()

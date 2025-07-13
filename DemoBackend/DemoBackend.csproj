@@ -12,6 +12,7 @@
     <ItemGroup>
         <PackageReference Include="FluentValidation" Version="12.0.0" />
         <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.7"/>
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.6"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.6" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.6" />
@@ -27,6 +28,23 @@
       <Content Include="..\.dockerignore">
         <Link>.dockerignore</Link>
       </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Folder Include="Models\PasswordHashing\Responses\"/>
+        <Folder Include="Models\RefreshTokenFamilies\Mapping\"/>
+        <Folder Include="Models\RefreshTokenFamilies\Requests\"/>
+        <Folder Include="Models\RefreshTokenFamilies\Responses\"/>
+        <Folder Include="Models\RefreshTokenFamilies\Validators\"/>
+        <Folder Include="Models\RefreshTokens\Mapping\"/>
+        <Folder Include="Models\RefreshTokens\Requests\"/>
+        <Folder Include="Models\RefreshTokens\Responses\"/>
+        <Folder Include="Models\RefreshTokens\Validators\"/>
+        <Folder Include="Models\UserAccounts\Mapping\"/>
+        <Folder Include="Models\UserProfiles\Mapping\"/>
+        <Folder Include="Models\UserProfiles\Requests\"/>
+        <Folder Include="Models\UserProfiles\Responses\"/>
+        <Folder Include="Models\UserProfiles\Validators\"/>
     </ItemGroup>
 
 </Project>

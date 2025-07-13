@@ -13,15 +13,16 @@ public sealed class RefreshTokenFamily : IEntity
     public DateTime ExpiresAt { get; set; }
 
     // Navigation
-    public Auth Auth { get; set; } = null!;
+    public UserAccount UserAccount { get; set; } = null!;
     public ICollection<RefreshToken> RefreshTokens { get; set; } = [];
 }
 
-internal class RefreshTokenFamilyEntityTypeConfiguration : IEntityTypeConfiguration<RefreshTokenFamily>
+internal class
+    RefreshTokenFamilyEntityTypeConfiguration : IEntityTypeConfiguration<RefreshTokenFamily>
 {
     public void Configure(EntityTypeBuilder<RefreshTokenFamily> builder)
     {
-        builder.HasOne(family => family.Auth)
+        builder.HasOne(family => family.UserAccount)
             .WithMany(auth => auth.RefreshTokenFamilies)
             .HasForeignKey(family => family.AuthId);
     }

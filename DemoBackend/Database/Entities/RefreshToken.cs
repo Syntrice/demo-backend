@@ -10,7 +10,7 @@ public sealed class RefreshToken : IEntity
     public Guid FamilyId { get; set; }
     public Guid? PreviousId { get; set; }
     public Guid? NextId { get; set; }
-    public string Hash { get; set; } = null!;
+    public string Hash { get; set; } = string.Empty;
     public DateTime IssuedAt { get; set; }
     public DateTime ExpiresAt { get; set; }
 

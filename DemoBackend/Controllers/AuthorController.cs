@@ -12,7 +12,7 @@ namespace DemoBackend.Controllers
         IAuthorService authorService,
         IBookService bookService,
         IValidator<AuthorRequestModel> authorRequestValidator)
-        : ControllerBase, IAuthorController
+        : ControllerBase
     {
         [HttpGet]
         public async Task<IActionResult> GetAllAuthors()

@@ -7,22 +7,46 @@ using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
-builder.Services.AddOpenApi();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+// Settings
+
 builder.Services
     .AddOptions<DatabaseSettings>()
     .Bind(builder.Configuration.GetSection("DatabaseSettings"))
     .ValidateDataAnnotations();
-builder.Services.AddDbContext<ApplicationDbContext>();
-builder.Services.AddHostedService<DatabaseMigrationService>();
+builder.Services
+    .AddOptions<JWTSettings>()
+    .Bind(builder.Configuration.GetSection("JWTSettings"))
+    .ValidateDataAnnotations();
+builder.Services
+    .AddOptions<PasswordHashingSettings>()
+    .Bind(builder.Configuration.GetSection("PasswordHashingSettings"))
+    .ValidateDataAnnotations();
+
+// Utilities
+
 builder.Services.AddMappersFromAssemblyContaining<Program>();
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+
+// Database
+
+builder.Services.AddDbContext<ApplicationDbContext>();
+builder.Services.AddHostedService<DatabaseMigrationService>();
+
+// Services
+
 builder.Services.AddScoped<IDatabaseSeedingService, DatabaseSeedingService>();
 builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IAuthorService, AuthorService>();
+builder.Services.AddScoped<IUserAccountService, UserAccountService>();
+builder.Services.AddScoped<IPasswordHashingService, PasswordHashingService>();
 
+
+// API
+
+builder.Services.AddControllers();
+builder.Services.AddOpenApi();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
@@ -41,6 +65,7 @@ app.MapControllers();
 
 app.Run();
 
+// Needed for integration tests
 public partial class Program
 {
 }

@@ -4,7 +4,8 @@ services:
     image: demobackend
     container_name: api
     environment:
-      - DatabaseSettings__ConnectionString=Server=postgres;Port=5432;Database=demobackend;User Id=postgres;Password=${DB_PASSWORD};
+      - Database__ConnectionString=Server=postgres;Port=5432;Database=demobackend;User Id=postgres;Password=${DB_PASSWORD};
+      - JWT__SecretKey=${AUTH_SECRET}
       - ASPNETCORE_HTTP_PORTS=8080
     build:
       context: .

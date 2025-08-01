@@ -4,7 +4,7 @@ namespace DemoBackend.Settings;
 
 public class DatabaseSettings
 {
-    public const string SectionName = "DatabaseSettings";
+    public const string SectionName = "Database";
 
     [Required] public string ConnectionString { get; init; } = null!;
 }

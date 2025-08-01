@@ -4,7 +4,7 @@ namespace DemoBackend.Settings;
 
 public class JWTSettings
 {
-    public const string SectionName = "JWTSettings";
+    public const string SectionName = "JWT";
 
     [Required]
     [MinLength(32)] // should be minimum of 256 bits to satisfy algorithm requirements
@@ -17,6 +17,10 @@ public class JWTSettings
     [Required] [Range(1, int.MaxValue)] public int ExpirationInMinutes { get; set; } = 0;
 
     [Required] [Range(1, int.MaxValue)] public int RefreshTokenExpirationInDays { get; set; } = 0;
+
+    [Required]
+    [Range(1, int.MaxValue)]
+    public int RefreshTokenFamilyExpirationInDays { get; set; } = 0;
 
     public int RefreshTokenSize { get; set; } = 32;
 }

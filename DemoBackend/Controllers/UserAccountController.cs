@@ -1,9 +1,11 @@
 using DemoBackend.Common.Results;
 using DemoBackend.Models.UserAccounts.Requests;
 using DemoBackend.Services;
+using DemoBackend.Settings;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace DemoBackend.Controllers;
 
@@ -14,7 +16,8 @@ public class UserAccountController(
     IValidator<RegisterRequest> registerRequestValidator,
     IValidator<LoginRequest> logingRequestValidator,
     IValidator<RefreshRequest> refreshRequestValidator,
-    IValidator<RevokeRefreshTokenFamilyRequest> revokeRefreshTokenFamilyRequestValidator)
+    IValidator<RevokeRefreshTokenFamilyRequest> revokeRefreshTokenFamilyRequestValidator,
+    IOptions<JWTSettings> jwtSettings)
     : ControllerBase
 {
     [HttpPost("register")]
@@ -34,7 +37,8 @@ public class UserAccountController(
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginRequest model)
+    public async Task<IActionResult> Login([FromBody] LoginRequest model,
+        [FromQuery] bool useCookies = false)
     {
         var validationResult = await logingRequestValidator.ValidateAsync(model);
 
@@ -45,22 +49,95 @@ public class UserAccountController(
 
         var result = await accountService.LoginAsync(model);
         if (result.IsFailure) return result.ToProblemDetailsResponse(this);
+
+        if (useCookies)
+        {
+            // Set cookies for both access token and refresh token
+            Response.Cookies.Append("access-token", result.Value.AccessToken, new CookieOptions
+            {
+                Expires = DateTimeOffset.UtcNow.AddMinutes(jwtSettings.Value.ExpirationInMinutes),
+                HttpOnly = true,
+                IsEssential = true,
+                Secure = true,
+                // unfortunately we have to use SameSiteMode.None as this is an API and will be called by a separate
+                // front end server likely on a different domain. 
+                SameSite = SameSiteMode.None
+            });
+
+            Response.Cookies.Append("refresh-token", result.Value.RefreshToken, new CookieOptions
+            {
+                Expires = DateTimeOffset.UtcNow.AddDays(jwtSettings.Value
+                    .RefreshTokenExpirationInDays),
+                HttpOnly = true,
+                IsEssential = true,
+                Secure = true,
+                // unfortunately we have to use SameSiteMode.None as this is an API and will be called by a separate
+                // front end server likely on a different domain. 
+                SameSite = SameSiteMode.None
+            });
+            return Ok();
+        }
+
         return Ok(result.Value);
     }
 
     [HttpPost("refresh")]
-    public async Task<IActionResult> Refresh([FromBody] RefreshRequest model)
+    public async Task<IActionResult> Refresh([FromBody] RefreshRequest model,
+        [FromQuery] bool useCookies = false)
     {
-        var validationResult = await refreshRequestValidator.ValidateAsync(model);
-
-        if (!validationResult.IsValid)
+        if (useCookies)
         {
-            return validationResult.ToProblemDetailsResponse(this);
-        }
+            var refreshTokenCookie = Request.Cookies["refresh-token"]; // attempt to get cookie
 
-        var result = await accountService.RefreshAsync(model);
-        if (result.IsFailure) return result.ToProblemDetailsResponse(this);
-        return Ok(result.Value);
+            if (string.IsNullOrEmpty(refreshTokenCookie)) // check if cookie exists
+            {
+                return BadRequest();
+            }
+
+            var request = new RefreshRequest
+            {
+                RefreshToken = refreshTokenCookie
+            };
+
+            var result = await accountService.RefreshAsync(request);
+            if (result.IsFailure) return result.ToProblemDetailsResponse(this);
+
+            Response.Cookies.Append("access-token", result.Value.AccessToken, new CookieOptions
+            {
+                Expires = DateTimeOffset.UtcNow.AddMinutes(jwtSettings.Value.ExpirationInMinutes),
+                HttpOnly = true,
+                IsEssential = true,
+                Secure = true,
+                // unfortunately we have to use SameSiteMode.None as this is an API and will be called by a separate
+                // front end server likely on a different domain. 
+                SameSite = SameSiteMode.None
+            });
+
+            Response.Cookies.Append("refresh-token", result.Value.RefreshToken, new CookieOptions
+            {
+                Expires = DateTimeOffset.UtcNow.AddDays(jwtSettings.Value
+                    .RefreshTokenExpirationInDays),
+                HttpOnly = true,
+                IsEssential = true,
+                Secure = true,
+                // unfortunately we have to use SameSiteMode.None as this is an API and will be called by a separate
+                SameSite = SameSiteMode.None
+            });
+
+            return Ok();
+        }
+        else
+        {
+            var validationResult = await refreshRequestValidator.ValidateAsync(model);
+
+            if (!validationResult.IsValid)
+            {
+                return validationResult.ToProblemDetailsResponse(this);
+            }
+
+            var result = await accountService.RefreshAsync(model);
+            return result.IsFailure ? result.ToProblemDetailsResponse(this) : Ok(result.Value);
+        }
     }
 
     [HttpPost("revoke-refresh-token-family")]

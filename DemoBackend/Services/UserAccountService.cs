@@ -151,7 +151,8 @@ public class UserAccountService(
             Hash = jwtService.GenerateRefreshTokenHash(),
             IssuedAt = DateTime.UtcNow,
             ExpiresAt = DateTime.UtcNow.AddDays(jwtSettings.Value.RefreshTokenExpirationInDays),
-            Previous = refreshToken
+            Previous = refreshToken,
+            PreviousId = refreshToken.Id
         };
 
         // Save to database

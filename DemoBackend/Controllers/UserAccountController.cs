@@ -63,7 +63,7 @@ public class UserAccountController(
         return Ok(result.Value);
     }
 
-    [HttpPost("revokeRefreshTokenFamily")]
+    [HttpPost("revoke-refresh-token-family")]
     [Authorize]
     public async Task<IActionResult> RevokeRefreshTokenFamily()
     {

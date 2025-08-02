@@ -49,7 +49,7 @@ namespace DemoBackend.Database.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Authors");
+                    b.ToTable("Authors", (string)null);
                 });
 
             modelBuilder.Entity("DemoBackend.Database.Entities.Book", b =>
@@ -64,7 +64,7 @@ namespace DemoBackend.Database.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Books");
+                    b.ToTable("Books", (string)null);
                 });
 
             modelBuilder.Entity("DemoBackend.Database.Entities.RefreshToken", b =>
@@ -102,7 +102,7 @@ namespace DemoBackend.Database.Migrations
                     b.HasIndex("NextId")
                         .IsUnique();
 
-                    b.ToTable("RefreshTokens");
+                    b.ToTable("RefreshTokens", (string)null);
                 });
 
             modelBuilder.Entity("DemoBackend.Database.Entities.RefreshTokenFamily", b =>
@@ -124,7 +124,7 @@ namespace DemoBackend.Database.Migrations
 
                     b.HasIndex("AuthId");
 
-                    b.ToTable("RefreshTokenFamilies");
+                    b.ToTable("RefreshTokenFamilies", (string)null);
                 });
 
             modelBuilder.Entity("DemoBackend.Database.Entities.UserAccount", b =>
@@ -156,7 +156,7 @@ namespace DemoBackend.Database.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UserAccounts");
+                    b.ToTable("UserAccounts", (string)null);
                 });
 
             modelBuilder.Entity("DemoBackend.Database.Entities.UserProfile", b =>
@@ -180,7 +180,7 @@ namespace DemoBackend.Database.Migrations
                     b.HasIndex("DisplayName")
                         .IsUnique();
 
-                    b.ToTable("UserProfiles");
+                    b.ToTable("UserProfiles", (string)null);
                 });
 
             modelBuilder.Entity("AuthorBook", b =>

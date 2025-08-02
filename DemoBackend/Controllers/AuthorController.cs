@@ -1,3 +1,4 @@
+using DemoBackend.Authorization;
 using DemoBackend.Common.Results;
 using DemoBackend.Models.Authors.Requests;
 using DemoBackend.Services;
@@ -17,6 +18,7 @@ namespace DemoBackend.Controllers
     {
         [HttpGet]
         [Authorize]
+        [HasPermission(Permission.ReadAuthors)]
         public async Task<IActionResult> GetAllAuthors()
         {
             var authors = await authorService.GetAllAuthorsAsync();
@@ -25,6 +27,7 @@ namespace DemoBackend.Controllers
 
         [HttpGet("{id:guid}")]
         [Authorize]
+        [HasPermission(Permission.ReadAuthors)]
         public async Task<IActionResult> GetAuthorById(Guid id)
         {
             var result = await authorService.GetAuthorByIdAsync(id);
@@ -33,6 +36,7 @@ namespace DemoBackend.Controllers
 
         [HttpPost]
         [Authorize]
+        [HasPermission(Permission.WriteAuthors)]
         public async Task<IActionResult> CreateAuthor([FromBody] AuthorRequestModel model)
         {
             var validationResult = await authorRequestValidator.ValidateAsync(model);
@@ -49,6 +53,7 @@ namespace DemoBackend.Controllers
 
         [HttpPut("{id:guid}")]
         [Authorize]
+        [HasPermission(Permission.WriteAuthors)]
         public async Task<IActionResult> UpdateAuthor(Guid id, [FromBody] AuthorRequestModel model)
         {
             var validationResult = await authorRequestValidator.ValidateAsync(model);
@@ -63,6 +68,7 @@ namespace DemoBackend.Controllers
 
         [HttpDelete("{id:guid}")]
         [Authorize]
+        [HasPermission(Permission.WriteAuthors)]
         public async Task<IActionResult> DeleteAuthor(Guid id)
         {
             var result = await authorService.DeleteAuthorAsync(id);
@@ -71,6 +77,7 @@ namespace DemoBackend.Controllers
 
         [HttpGet("{id:guid}/books")]
         [Authorize]
+        [HasPermission(Permission.ReadBooks)]
         public async Task<IActionResult> GetAuthorBooks(Guid id)
         {
             var books = await bookService.GetAllBooksByAuthorIdAsync(id);

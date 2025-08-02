@@ -2,6 +2,7 @@ using DemoBackend.Common.Results;
 using DemoBackend.Models.Books.Requests;
 using DemoBackend.Services;
 using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DemoBackend.Controllers;
@@ -14,6 +15,7 @@ public class BookController(
     : ControllerBase
 {
     [HttpGet]
+    [Authorize]
     public async Task<IActionResult> GetAllBooks()
     {
         var result = await bookService.GetAllBooksAsync();
@@ -21,6 +23,7 @@ public class BookController(
     }
 
     [HttpGet("{id:guid}")]
+    [Authorize]
     public async Task<IActionResult> GetBookById(Guid id)
     {
         var result = await bookService.GetBookByIdAsync(id);
@@ -29,6 +32,7 @@ public class BookController(
     }
 
     [HttpPost]
+    [Authorize]
     public async Task<IActionResult> CreateBook([FromBody] BookRequestModel model)
     {
         var validationResult = await bookRequestValidator.ValidateAsync(model);
@@ -45,6 +49,7 @@ public class BookController(
     }
 
     [HttpPut("{id:guid}")]
+    [Authorize]
     public async Task<IActionResult> UpdateBook(Guid id, [FromBody] BookRequestModel model)
     {
         var validationResult = await bookRequestValidator.ValidateAsync(model);
@@ -59,6 +64,7 @@ public class BookController(
     }
 
     [HttpDelete("{id:guid}")]
+    [Authorize]
     public async Task<IActionResult> DeleteBook(Guid id)
     {
         var result = await bookService.DeleteBookAsync(id);

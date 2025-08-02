@@ -2,6 +2,7 @@ using DemoBackend.Common.Results;
 using DemoBackend.Models.Authors.Requests;
 using DemoBackend.Services;
 using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DemoBackend.Controllers
@@ -15,6 +16,7 @@ namespace DemoBackend.Controllers
         : ControllerBase
     {
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetAllAuthors()
         {
             var authors = await authorService.GetAllAuthorsAsync();
@@ -22,6 +24,7 @@ namespace DemoBackend.Controllers
         }
 
         [HttpGet("{id:guid}")]
+        [Authorize]
         public async Task<IActionResult> GetAuthorById(Guid id)
         {
             var result = await authorService.GetAuthorByIdAsync(id);
@@ -29,6 +32,7 @@ namespace DemoBackend.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> CreateAuthor([FromBody] AuthorRequestModel model)
         {
             var validationResult = await authorRequestValidator.ValidateAsync(model);
@@ -44,6 +48,7 @@ namespace DemoBackend.Controllers
         }
 
         [HttpPut("{id:guid}")]
+        [Authorize]
         public async Task<IActionResult> UpdateAuthor(Guid id, [FromBody] AuthorRequestModel model)
         {
             var validationResult = await authorRequestValidator.ValidateAsync(model);
@@ -57,6 +62,7 @@ namespace DemoBackend.Controllers
         }
 
         [HttpDelete("{id:guid}")]
+        [Authorize]
         public async Task<IActionResult> DeleteAuthor(Guid id)
         {
             var result = await authorService.DeleteAuthorAsync(id);
@@ -64,6 +70,7 @@ namespace DemoBackend.Controllers
         }
 
         [HttpGet("{id:guid}/books")]
+        [Authorize]
         public async Task<IActionResult> GetAuthorBooks(Guid id)
         {
             var books = await bookService.GetAllBooksByAuthorIdAsync(id);

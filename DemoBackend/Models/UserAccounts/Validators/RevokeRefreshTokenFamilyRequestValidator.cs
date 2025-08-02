@@ -8,6 +8,8 @@ public class
 {
     public RevokeRefreshTokenFamilyRequestValidator()
     {
-        RuleFor(model => model.RefreshTokenFamilyId).NotEmpty();
+        RuleFor(model => model.RefreshTokenFamilyId)
+            .NotEmpty()
+            .NotEqual(Guid.Empty);
     }
 }

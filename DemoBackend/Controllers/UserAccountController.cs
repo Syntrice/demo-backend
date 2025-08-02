@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace DemoBackend.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/users")]
 public class UserAccountController(
     IUserAccountService accountService,
     IValidator<RegisterRequest> registerRequestValidator,
@@ -67,10 +67,16 @@ public class UserAccountController(
     [Authorize]
     public async Task<IActionResult> RevokeRefreshTokenFamily()
     {
-        var familyId = User.FindFirst("refreshTokenFamily")?.Value;
+        var familyId = User.FindFirst("refresh_token_family")?.Value;
+
+        if (!Guid.TryParse(familyId, out var parsedGuid))
+        {
+            return BadRequest("Invalid refresh token family ID in token claims.");
+        }
 
         var revokeRequest = new RevokeRefreshTokenFamilyRequest
-            { RefreshTokenFamilyId = new Guid(familyId) };
+            { RefreshTokenFamilyId = parsedGuid };
+
         var validationResult =
             await revokeRefreshTokenFamilyRequestValidator.ValidateAsync(revokeRequest);
         if (!validationResult.IsValid)

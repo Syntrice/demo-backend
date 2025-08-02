@@ -31,8 +31,8 @@ public class JWTService(IOptions<JWTSettings> options) : IJWTService
             [
                 new Claim(JwtRegisteredClaimNames.Sub, request.Id),
                 new Claim("email", request.Email),
-                new Claim("username", request.DisplayName),
-                new Claim("refreshTokenFamily", request.RefreshTokenFamilyId)
+                new Claim("display_name", request.DisplayName),
+                new Claim("refresh_token_family", request.RefreshTokenFamilyId)
             ]),
             Expires = DateTime.UtcNow.AddMinutes(options.Value.ExpirationInMinutes),
             SigningCredentials = credentials,

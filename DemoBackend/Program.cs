@@ -107,7 +107,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme) // co
         {
             OnMessageReceived = context =>
             {
-                if (context.Request.Cookies.TryGetValue("accessToken",
+                if (context.Request.Cookies.TryGetValue("access-token",
                         out var accessTokenFromCookie))
                 {
                     context.Token = accessTokenFromCookie;

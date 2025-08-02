@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+
 namespace DemoBackend.Database.Services;
 
 public sealed class DatabaseMigrationService(
@@ -8,8 +10,7 @@ public sealed class DatabaseMigrationService(
     {
         using var scope = serviceProvider.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        await dbContext.Database.EnsureDeletedAsync(ct);
-        await dbContext.Database.EnsureCreatedAsync(ct);
+        await dbContext.Database.MigrateAsync(cancellationToken: ct);
     }
 
     public Task StopAsync(CancellationToken _) => Task.CompletedTask;

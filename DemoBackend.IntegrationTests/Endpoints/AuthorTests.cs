@@ -91,7 +91,7 @@ public class AuthorTests(IntegrationTestFixture fixture)
     public async Task GetAuthorBooks_ReturnsBooks()
     {
         var authorId = await CreateAuthorAsync();
-        _ = await CreateBookAsync(authorId, title: "Book 1");
+        _ = await CreateBookAsync(authorId, "Book 1");
 
         var response = await fixture.Client.GetAsync($"/api/author/{authorId}/books");
         response.StatusCode.ShouldBe(HttpStatusCode.OK);

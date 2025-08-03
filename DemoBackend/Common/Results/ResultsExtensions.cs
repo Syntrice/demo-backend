@@ -5,7 +5,8 @@ namespace DemoBackend.Common.Results;
 public static class ResultsExtensions
 {
     // Extension method to easily map result to IActionResult
-    public static IActionResult ToProblemDetailsResponse<T>(this Result<T> result, ControllerBase controller)
+    public static IActionResult ToProblemDetailsResponse<T>(this Result<T> result,
+        ControllerBase controller)
     {
         if (result.IsSuccess)
             return controller.Ok(result.Value);
@@ -16,13 +17,16 @@ public static class ResultsExtensions
     }
 
     // Helper method to translate result error codes to http error codes
-    private static int ToStatusCode(this ErrorCode code) => code switch
+    private static int ToStatusCode(this ErrorCode code)
     {
-        ErrorCode.Validation => StatusCodes.Status400BadRequest,
-        ErrorCode.NotFound => StatusCodes.Status404NotFound,
-        ErrorCode.Conflict => StatusCodes.Status409Conflict,
-        ErrorCode.Unauthorized => StatusCodes.Status401Unauthorized,
-        ErrorCode.Forbidden => StatusCodes.Status403Forbidden,
-        _ => StatusCodes.Status500InternalServerError
-    };
+        return code switch
+        {
+            ErrorCode.Validation => StatusCodes.Status400BadRequest,
+            ErrorCode.NotFound => StatusCodes.Status404NotFound,
+            ErrorCode.Conflict => StatusCodes.Status409Conflict,
+            ErrorCode.Unauthorized => StatusCodes.Status401Unauthorized,
+            ErrorCode.Forbidden => StatusCodes.Status403Forbidden,
+            _ => StatusCodes.Status500InternalServerError
+        };
+    }
 }

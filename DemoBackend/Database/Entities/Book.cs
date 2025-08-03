@@ -3,11 +3,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace DemoBackend.Database.Entities;
 
-public class Book : IEntity
+public class Book : IEntity<Guid>
 {
-    public Guid Id { get; set; }
     public string Title { get; set; } = "";
     public ICollection<Author> Authors { get; set; } = new List<Author>();
+    public Guid Id { get; set; }
 }
 
 internal class BookConfiguration : IEntityTypeConfiguration<Book>

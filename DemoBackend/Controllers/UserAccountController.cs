@@ -25,10 +25,7 @@ public class UserAccountController(
     {
         var validationResult = await registerRequestValidator.ValidateAsync(model);
 
-        if (!validationResult.IsValid)
-        {
-            return validationResult.ToProblemDetailsResponse(this);
-        }
+        if (!validationResult.IsValid) return validationResult.ToProblemDetailsResponse(this);
 
         var result = await accountService.RegisterAsync(model);
         if (result.IsFailure) return result.ToProblemDetailsResponse(this);
@@ -42,10 +39,7 @@ public class UserAccountController(
     {
         var validationResult = await logingRequestValidator.ValidateAsync(model);
 
-        if (!validationResult.IsValid)
-        {
-            return validationResult.ToProblemDetailsResponse(this);
-        }
+        if (!validationResult.IsValid) return validationResult.ToProblemDetailsResponse(this);
 
         var result = await accountService.LoginAsync(model);
         if (result.IsFailure) return result.ToProblemDetailsResponse(this);
@@ -90,9 +84,7 @@ public class UserAccountController(
             var refreshTokenCookie = Request.Cookies["refresh-token"]; // attempt to get cookie
 
             if (string.IsNullOrEmpty(refreshTokenCookie)) // check if cookie exists
-            {
                 return BadRequest();
-            }
 
             var request = new RefreshRequest
             {
@@ -130,10 +122,7 @@ public class UserAccountController(
         {
             var validationResult = await refreshRequestValidator.ValidateAsync(model);
 
-            if (!validationResult.IsValid)
-            {
-                return validationResult.ToProblemDetailsResponse(this);
-            }
+            if (!validationResult.IsValid) return validationResult.ToProblemDetailsResponse(this);
 
             var result = await accountService.RefreshAsync(model);
             return result.IsFailure ? result.ToProblemDetailsResponse(this) : Ok(result.Value);
@@ -147,19 +136,14 @@ public class UserAccountController(
         var familyId = User.FindFirst("refresh_token_family")?.Value;
 
         if (!Guid.TryParse(familyId, out var parsedGuid))
-        {
             return BadRequest("Invalid refresh token family ID in token claims.");
-        }
 
         var revokeRequest = new RevokeRefreshTokenFamilyRequest
             { RefreshTokenFamilyId = parsedGuid };
 
         var validationResult =
             await revokeRefreshTokenFamilyRequestValidator.ValidateAsync(revokeRequest);
-        if (!validationResult.IsValid)
-        {
-            return validationResult.ToProblemDetailsResponse(this);
-        }
+        if (!validationResult.IsValid) return validationResult.ToProblemDetailsResponse(this);
 
         var result = await accountService.RevokeRefreshTokenFamilyAsync(revokeRequest);
         if (result.IsFailure) return result.ToProblemDetailsResponse(this);

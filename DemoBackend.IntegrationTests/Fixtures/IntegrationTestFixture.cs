@@ -5,10 +5,6 @@ namespace DemoBackend.IntegrationTests.Fixtures;
 
 public class IntegrationTestFixture : IAsyncLifetime
 {
-    private TestApiFactory _factory = null!;
-    public HttpClient Client => _factory.CreateClient();
-    public IServiceProvider Services => _factory.Services;
-
     private readonly PostgreSqlContainer _dbContainer = new PostgreSqlBuilder()
         .WithImage("postgres:latest")
         .WithDatabase("demobackend-postgres-test-container")
@@ -16,6 +12,10 @@ public class IntegrationTestFixture : IAsyncLifetime
         .WithPassword("postgres")
         .WithCleanUp(true)
         .Build();
+
+    private TestApiFactory _factory = null!;
+    public HttpClient Client => _factory.CreateClient();
+    public IServiceProvider Services => _factory.Services;
 
     public async Task InitializeAsync()
     {

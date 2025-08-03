@@ -1,6 +1,6 @@
 namespace DemoBackend.Database.Entities;
 
-public interface IEntity
+public interface IEntity<TKey> where TKey : IEquatable<TKey>
 {
-    Guid Id { get; set; }
+    TKey Id { get; set; }
 }

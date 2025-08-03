@@ -3,14 +3,14 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace DemoBackend.Database.Entities;
 
-public sealed class UserProfile : IEntity
+public sealed class UserProfile : IEntity<Guid>
 {
-    public Guid Id { get; set; }
     public Guid AccountId { get; set; }
     public string DisplayName { get; set; } = string.Empty;
 
     // Navigation
     public UserAccount UserAccount { get; set; } = null!;
+    public Guid Id { get; set; }
 }
 
 internal class UserEntityTypeConfiguration : IEntityTypeConfiguration<UserProfile>

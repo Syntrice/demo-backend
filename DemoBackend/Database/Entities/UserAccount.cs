@@ -3,9 +3,8 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace DemoBackend.Database.Entities;
 
-public sealed class UserAccount : IEntity
+public sealed class UserAccount : IEntity<Guid>
 {
-    public Guid Id { get; set; }
     public string Email { get; set; } = string.Empty;
     public string PasswordHash { get; set; } = string.Empty;
     public int HashSaltSize { get; set; }
@@ -17,6 +16,8 @@ public sealed class UserAccount : IEntity
 
     public ICollection<RefreshTokenFamily> RefreshTokenFamilies { get; set; } =
         new List<RefreshTokenFamily>();
+
+    public Guid Id { get; set; }
 }
 
 internal class AuthEntityTypeConfiguration : IEntityTypeConfiguration<UserAccount>
@@ -25,6 +26,7 @@ internal class AuthEntityTypeConfiguration : IEntityTypeConfiguration<UserAccoun
     {
         // Configure many-to-many with Roles
         builder.HasMany(u => u.Roles)
-            .WithMany(r => r.Users);
+            .WithMany(r => r.Users)
+            .UsingEntity(j => j.ToTable("UserRoles"));
     }
 }

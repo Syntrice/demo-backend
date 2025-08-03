@@ -90,9 +90,7 @@ public class BookService(ApplicationDbContext db, IMapper mapper) : IBookService
         Guid authorId)
     {
         if (!await db.Authors.AnyAsync(a => a.Id == authorId))
-        {
             return Error.NotFound($"Author with id '{authorId}' was not found.");
-        }
 
         return await mapper
             .Map<Book, BookDetailsResponseModel>(db.Books.Include(b => b.Authors)

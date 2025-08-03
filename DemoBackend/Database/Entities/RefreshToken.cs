@@ -3,10 +3,8 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace DemoBackend.Database.Entities;
 
-public sealed class RefreshToken : IEntity
+public sealed class RefreshToken : IEntity<Guid>
 {
-    public Guid Id { get; set; }
-
     public Guid FamilyId { get; set; }
     public Guid? PreviousId { get; set; }
     public Guid? NextId { get; set; }
@@ -18,6 +16,7 @@ public sealed class RefreshToken : IEntity
     public RefreshTokenFamily Family { get; set; } = null!;
     public RefreshToken? Previous { get; set; }
     public RefreshToken? Next { get; set; }
+    public Guid Id { get; set; }
 }
 
 internal class RefreshTokenEntityTypeConfiguration : IEntityTypeConfiguration<RefreshToken>

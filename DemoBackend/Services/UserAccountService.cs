@@ -31,28 +31,26 @@ public class UserAccountService(
         // TODO: Fix race condition risk
         if (await db.UserAccounts.FirstOrDefaultAsync(account => account.Email == request.Email) !=
             null)
-        {
             return Error.Conflict("Email address already taken");
-        }
 
         var hashedPassword = passwordHasher.Hash(request.Password, hashingSettings.Value);
 
-        var account = new UserAccount()
+        var account = new UserAccount
         {
             Email = request.Email,
             PasswordHash = hashedPassword,
             HashSize = hashingSettings.Value.HashSize,
             HashSaltSize = hashingSettings.Value.SaltSize,
             HashIterations = hashingSettings.Value.Iterations,
-            HashAlgorithm = hashingSettings.Value.Algorithm,
+            HashAlgorithm = hashingSettings.Value.Algorithm
         };
 
         db.UserAccounts.Add(account);
 
-        var profile = new UserProfile()
+        var profile = new UserProfile
         {
             DisplayName = request.DisplayName,
-            UserAccount = account,
+            UserAccount = account
         };
 
         db.UserProfiles.Add(profile);
@@ -68,30 +66,25 @@ public class UserAccountService(
             await db.UserAccounts.Include(account => account.UserProfile)
                 .FirstOrDefaultAsync(account => account.Email == request.Email);
 
-        if (user == null)
-        {
-            return Error.Forbidden("Incorrect email or password");
-        }
+        if (user == null) return Error.Forbidden("Incorrect email or password");
 
         var hasherSettings = new PasswordHashingSettings
         {
             SaltSize = user.HashSaltSize,
             HashSize = user.HashSize,
             Iterations = user.HashIterations,
-            Algorithm = user.HashAlgorithm,
+            Algorithm = user.HashAlgorithm
         };
 
         if (!passwordHasher.Verify(request.Password, user.PasswordHash, hasherSettings))
-        {
             return Error.Forbidden("Incorrect email or password");
-        }
 
         // Create a new refresh token family
         var tokenFamily = new RefreshTokenFamily
         {
             CreatedAt = DateTime.UtcNow,
             ExpiresAt =
-                DateTime.UtcNow.AddDays(jwtSettings.Value.RefreshTokenFamilyExpirationInDays),
+                DateTime.UtcNow.AddDays(jwtSettings.Value.RefreshTokenFamilyExpirationInDays)
         };
 
         // Create a refresh token
@@ -99,7 +92,7 @@ public class UserAccountService(
         {
             Hash = jwtService.GenerateRefreshTokenHash(),
             IssuedAt = DateTime.UtcNow,
-            ExpiresAt = DateTime.UtcNow.AddDays(jwtSettings.Value.RefreshTokenExpirationInDays),
+            ExpiresAt = DateTime.UtcNow.AddDays(jwtSettings.Value.RefreshTokenExpirationInDays)
         };
 
         // Save to database
@@ -133,9 +126,7 @@ public class UserAccountService(
 
         if (refreshToken == null || refreshToken.ExpiresAt < DateTime.UtcNow ||
             refreshToken.Family.ExpiresAt < DateTime.UtcNow)
-        {
             return Error.Forbidden("Refresh token invalid or expired");
-        }
 
         // Reuse detection
         if (refreshToken.NextId != null)
@@ -182,9 +173,7 @@ public class UserAccountService(
         var family = await db.RefreshTokenFamilies.FindAsync(request.RefreshTokenFamilyId);
 
         if (family == null)
-        {
             return Error.Forbidden("Unable to sign out. Perhaps you are already logged out.");
-        }
 
         db.RefreshTokenFamilies.Remove(family);
         await db.SaveChangesAsync();

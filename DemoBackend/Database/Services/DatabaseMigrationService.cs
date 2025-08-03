@@ -10,8 +10,11 @@ public sealed class DatabaseMigrationService(
     {
         using var scope = serviceProvider.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        await dbContext.Database.MigrateAsync(cancellationToken: ct);
+        await dbContext.Database.MigrateAsync(ct);
     }
 
-    public Task StopAsync(CancellationToken _) => Task.CompletedTask;
+    public Task StopAsync(CancellationToken _)
+    {
+        return Task.CompletedTask;
+    }
 }

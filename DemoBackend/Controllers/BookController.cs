@@ -30,7 +30,7 @@ public class BookController(
     public async Task<IActionResult> GetBookById(Guid id)
     {
         var result = await bookService.GetBookByIdAsync(id);
-        if (result.IsFailure) return result.ToProblemDetailsResponse((this));
+        if (result.IsFailure) return result.ToProblemDetailsResponse(this);
         return Ok(result.Value);
     }
 
@@ -41,10 +41,7 @@ public class BookController(
     {
         var validationResult = await bookRequestValidator.ValidateAsync(model);
 
-        if (!validationResult.IsValid)
-        {
-            return validationResult.ToProblemDetailsResponse(this);
-        }
+        if (!validationResult.IsValid) return validationResult.ToProblemDetailsResponse(this);
 
         var result = await bookService.CreateBookAsync(model);
         if (result.IsFailure) return result.ToProblemDetailsResponse(this);
@@ -58,10 +55,7 @@ public class BookController(
     public async Task<IActionResult> UpdateBook(Guid id, [FromBody] BookRequestModel model)
     {
         var validationResult = await bookRequestValidator.ValidateAsync(model);
-        if (!validationResult.IsValid)
-        {
-            return validationResult.ToProblemDetailsResponse(this);
-        }
+        if (!validationResult.IsValid) return validationResult.ToProblemDetailsResponse(this);
 
         var result = await bookService.UpdateBookAsync(id, model);
         if (result.IsFailure) return result.ToProblemDetailsResponse(this);

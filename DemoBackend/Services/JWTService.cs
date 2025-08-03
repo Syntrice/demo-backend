@@ -19,13 +19,13 @@ public class JWTService(IOptions<JWTSettings> options) : IJWTService
 {
     public string GenerateToken(GenerateTokenRequest request)
     {
-        string secretKey = options.Value.SecretKey;
+        var secretKey = options.Value.SecretKey;
 
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
 
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-        var tokenDescriptor = new SecurityTokenDescriptor()
+        var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(
             [

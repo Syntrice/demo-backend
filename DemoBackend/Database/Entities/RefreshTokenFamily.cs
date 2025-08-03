@@ -3,10 +3,8 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace DemoBackend.Database.Entities;
 
-public sealed class RefreshTokenFamily : IEntity
+public sealed class RefreshTokenFamily : IEntity<Guid>
 {
-    public Guid Id { get; set; }
-
     public Guid AuthId { get; set; }
 
     public DateTime CreatedAt { get; set; }
@@ -15,6 +13,7 @@ public sealed class RefreshTokenFamily : IEntity
     // Navigation
     public UserAccount UserAccount { get; set; } = null!;
     public ICollection<RefreshToken> RefreshTokens { get; set; } = [];
+    public Guid Id { get; set; }
 }
 
 internal class

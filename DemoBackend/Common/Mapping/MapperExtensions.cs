@@ -2,7 +2,8 @@ namespace DemoBackend.Common.Mapping;
 
 public static class MapperExtensions
 {
-    public static IServiceCollection AddMappersFromAssemblyContaining<T>(this IServiceCollection services)
+    public static IServiceCollection AddMappersFromAssemblyContaining<T>(
+        this IServiceCollection services)
     {
         services.AddSingleton<IMapper>(_ =>
         {

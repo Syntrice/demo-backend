@@ -28,10 +28,24 @@ public readonly struct Result<T>
     }
 
     // Convenience methods
-    public static Result<T> Success(T value) => new(value);
-    public static Result<T> Failure(params Error[] errs) => new(errs.ToList());
+    public static Result<T> Success(T value)
+    {
+        return new Result<T>(value);
+    }
+
+    public static Result<T> Failure(params Error[] errs)
+    {
+        return new Result<T>(errs.ToList());
+    }
 
     // Define implicit conversion operators
-    public static implicit operator Result<T>(T value) => Success(value);
-    public static implicit operator Result<T>(Error err) => Failure(err);
+    public static implicit operator Result<T>(T value)
+    {
+        return Success(value);
+    }
+
+    public static implicit operator Result<T>(Error err)
+    {
+        return Failure(err);
+    }
 }

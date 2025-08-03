@@ -22,7 +22,7 @@ public class AuthorService(ApplicationDbContext db, IMapper mapper) : IAuthorSer
     public async Task<Result<List<AuthorDetailsResponseModel>>> GetAllAuthorsAsync()
     {
         return await mapper
-            .Map<Author, AuthorDetailsResponseModel>(db.Authors.Include((e => e.Books)))
+            .Map<Author, AuthorDetailsResponseModel>(db.Authors.Include(e => e.Books))
             .ToListAsync();
     }
 

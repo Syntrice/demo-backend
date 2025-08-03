@@ -1,3 +1,4 @@
+using DemoBackend.Authorization;
 using DemoBackend.Database.Entities;
 using DemoBackend.Database.Services;
 using DemoBackend.Settings;
@@ -9,9 +10,9 @@ namespace DemoBackend.Database;
 public class ApplicationDbContext : DbContext
 {
     private readonly IConfiguration _configuration;
-    private readonly IOptions<DatabaseSettings> _settings;
     private readonly ILogger<ApplicationDbContext> _logger;
     private readonly IDatabaseSeedingService _seeder;
+    private readonly IOptions<DatabaseSettings> _settings;
 
     public DbSet<Book> Books { get; set; }
     public DbSet<Author> Authors { get; set; }
@@ -19,6 +20,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<UserAccount> UserAccounts { get; set; }
     public DbSet<RefreshTokenFamily> RefreshTokenFamilies { get; set; }
     public DbSet<RefreshToken> RefreshTokens { get; set; }
+    public DbSet<Role> Roles { get; set; }
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options,
         IOptions<DatabaseSettings> databaseSettings, ILogger<ApplicationDbContext> logger,
@@ -33,7 +35,8 @@ public class ApplicationDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
-        options.UseNpgsql(_settings.Value.ConnectionString);
+        options.UseNpgsql(_settings.Value.ConnectionString,
+            npgsql => { npgsql.MapEnum<Permission>("permission"); });
         options.UseSeeding((context, _) => { _seeder.Seed(context); });
         options.UseAsyncSeeding(async (context, _, cancellationToken) =>
         {

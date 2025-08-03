@@ -6,7 +6,8 @@ namespace DemoBackend.Common.Results;
 public static class ValidationResultExtensions
 {
     // Extension method to easily map result to IActionResult
-    public static IActionResult ToProblemDetailsResponse(this ValidationResult result, ControllerBase controller)
+    public static IActionResult ToProblemDetailsResponse(this ValidationResult result,
+        ControllerBase controller)
     {
         var errors = result.Errors
             .GroupBy(e => e.PropertyName)

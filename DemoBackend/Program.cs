@@ -47,7 +47,7 @@ builder.Services.AddSwaggerGen(options =>
         In = ParameterLocation.Header,
         Type = SecuritySchemeType.Http,
         Scheme = JwtBearerDefaults.AuthenticationScheme,
-        BearerFormat = "JWT",
+        BearerFormat = "JWT"
     };
     options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, securityScheme);
 
@@ -75,10 +75,8 @@ var jwtSettingsInstance =
     builder.Configuration.GetSection(JWTSettings.SectionName).Get<JWTSettings>();
 
 if (jwtSettingsInstance == null)
-{
     throw new InvalidOperationException(
         "No JWT settings configured. Please provide a JWT configuration section in the appsettings.json file or environment variables.");
-}
 
 builder.Services.AddAuthorization(); // used for policy / role / permissions system
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme) // configure jwt 
@@ -99,7 +97,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme) // co
             // Create a signing key using the same secret that is used for token generation
             IssuerSigningKey =
                 new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettingsInstance.SecretKey)),
-            ValidateIssuerSigningKey = true,
+            ValidateIssuerSigningKey = true
         };
 
         // Implement the abiltiy for the asp.net authentication middleware to get the token from the cookie
@@ -119,9 +117,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme) // co
                 {
                     var tokenValue = authorizationHeader.FirstOrDefault();
                     if (!string.IsNullOrEmpty(tokenValue) && tokenValue.StartsWith("Bearer"))
-                    {
                         context.Token = tokenValue.Substring("Bearer ".Length);
-                    }
                 }
 
                 return Task.CompletedTask;

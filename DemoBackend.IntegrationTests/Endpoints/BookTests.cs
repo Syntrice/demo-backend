@@ -10,7 +10,8 @@ using Xunit.Abstractions;
 
 namespace DemoBackend.IntegrationTests.Endpoints;
 
-public class BookTests(IntegrationTestFixture fixture, ITestOutputHelper output) : IClassFixture<IntegrationTestFixture>
+public class BookTests(IntegrationTestFixture fixture, ITestOutputHelper output)
+    : IClassFixture<IntegrationTestFixture>
 {
     private async Task<Guid> CreateAuthorAsync(string? name = null)
     {
@@ -89,7 +90,8 @@ public class BookTests(IntegrationTestFixture fixture, ITestOutputHelper output)
         var authorId = await CreateAuthorAsync();
         var bookId = await CreateBookAsync(authorId);
 
-        var update = new BookRequestModel { Title = "Updated Title", AuthorIds = new[] { authorId } };
+        var update = new BookRequestModel
+            { Title = "Updated Title", AuthorIds = new[] { authorId } };
         var response = await fixture.Client.PutAsJsonAsync($"/api/book/{bookId}", update);
 
         response.StatusCode.ShouldBe(HttpStatusCode.NoContent);

@@ -5,15 +5,12 @@ namespace DemoBackend.Database.Entities.Auth;
 
 public sealed class RefreshTokenFamily : IEntity<Guid>
 {
-    public Guid AuthId { get; set; }
-
+    public Guid Id { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime ExpiresAt { get; set; }
-
-    // Navigation
+    public Guid UserAccountId { get; set; }
     public UserAccount UserAccount { get; set; } = null!;
     public ICollection<RefreshToken> RefreshTokens { get; set; } = [];
-    public Guid Id { get; set; }
 }
 
 internal class
@@ -23,6 +20,6 @@ internal class
     {
         builder.HasOne(family => family.UserAccount)
             .WithMany(auth => auth.RefreshTokenFamilies)
-            .HasForeignKey(family => family.AuthId);
+            .HasForeignKey(family => family.UserAccountId);
     }
 }

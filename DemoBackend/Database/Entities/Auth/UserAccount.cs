@@ -28,5 +28,8 @@ internal class AuthEntityTypeConfiguration : IEntityTypeConfiguration<UserAccoun
         builder.HasMany(u => u.Roles)
             .WithMany(r => r.Users)
             .UsingEntity(j => j.ToTable("UserRoles"));
+        builder.Property(u => u.Email).HasMaxLength(254);
+        builder.Property(u => u.PasswordHash).HasMaxLength(300);
+        builder.Property(u => u.HashAlgorithm).HasMaxLength(50);
     }
 }

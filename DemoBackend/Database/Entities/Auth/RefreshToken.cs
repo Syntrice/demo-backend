@@ -33,5 +33,6 @@ internal class RefreshTokenEntityTypeConfiguration : IEntityTypeConfiguration<Re
         builder.HasOne(token => token.Next)
             .WithOne(token => token.Previous)
             .HasForeignKey<RefreshToken>(token => token.NextId);
+        builder.Property(token => token.Hash).HasMaxLength(100);
     }
 }

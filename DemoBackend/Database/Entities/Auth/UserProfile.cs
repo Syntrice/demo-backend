@@ -20,5 +20,6 @@ internal class UserEntityTypeConfiguration : IEntityTypeConfiguration<UserProfil
         builder.HasIndex(user => user.DisplayName).IsUnique();
         builder.HasOne(profile => profile.UserAccount).WithOne(account => account.UserProfile)
             .HasForeignKey<UserProfile>(profile => profile.AccountId);
+        builder.Property(profile => profile.DisplayName).HasMaxLength(254);
     }
 }

@@ -3,9 +3,13 @@
 This demo REST API backend is built using ASP.NET Core and demonstrates the use of Docker, Docker Compose, and PostgreSQL.
 
 ## Features
-- **ASP.NET Core**: Robust framework for building web APIs.
-- **Docker & Docker Compose**: Containerize and streamline your development and deployment.
-- **PostgreSQL**: Integrated SQL database for backend operations.
+- **Password Hashing and Salting**
+- **Configurable JWT Authentication with cookie support**
+- **Configurable refresh token system with rotation and reuse detection**
+- **Permission-role based authorisation**
+- **Docker & Docker Compose support**
+- **Database with PostgreSQL**
+- **Object-relational mapping with Entity Framework Core**
 
 ## Getting Started
 
@@ -25,20 +29,6 @@ docker-compose up
 ```
 
 Your API server and database will start as defined in `compose.yaml`.
-
-## Testing
-
-To run the test suite, execute:
-```bash
-dotnet test DemoBackend.Tests/DemoBackend.Tests.csproj
-```
-
-## Project Structure
-
-- **DemoBackend/**: Main API project.
-- **DemoBackend.Tests/**: Test project.
-- **compose.yaml**: Docker Compose configuration.
-- **Dockerfile**: Docker configuration for building the API image.
 
 ## License
 

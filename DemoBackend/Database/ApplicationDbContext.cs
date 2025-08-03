@@ -1,5 +1,6 @@
 using DemoBackend.Authorization;
 using DemoBackend.Database.Entities;
+using DemoBackend.Database.Entities.Auth;
 using DemoBackend.Database.Services;
 using DemoBackend.Settings;
 using Microsoft.EntityFrameworkCore;

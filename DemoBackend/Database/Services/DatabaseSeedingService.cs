@@ -1,5 +1,6 @@
 using DemoBackend.Authorization;
 using DemoBackend.Database.Entities;
+using DemoBackend.Database.Entities.Auth;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 

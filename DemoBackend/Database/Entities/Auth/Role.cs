@@ -2,7 +2,7 @@ using DemoBackend.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace DemoBackend.Database.Entities;
+namespace DemoBackend.Database.Entities.Auth;
 
 public sealed class Role : IEntity<Guid>
 {

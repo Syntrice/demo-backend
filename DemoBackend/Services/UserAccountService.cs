@@ -1,6 +1,6 @@
 using DemoBackend.Common.Results;
 using DemoBackend.Database;
-using DemoBackend.Database.Entities;
+using DemoBackend.Database.Entities.Auth;
 using DemoBackend.Models.JWTs.Requests;
 using DemoBackend.Models.UserAccounts.Requests;
 using DemoBackend.Models.UserAccounts.Responses;

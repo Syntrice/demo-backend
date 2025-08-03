@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace DemoBackend.Database.Entities;
+namespace DemoBackend.Database.Entities.Auth;
 
 public sealed class RefreshToken : IEntity<Guid>
 {

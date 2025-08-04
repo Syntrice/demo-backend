@@ -1,4 +1,5 @@
 using System.Text;
+using DemoBackend.Authorization;
 using DemoBackend.Common.Mapping;
 using DemoBackend.Database;
 using DemoBackend.Database.Services;
@@ -6,6 +7,7 @@ using DemoBackend.Services;
 using DemoBackend.Settings;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
@@ -30,6 +32,7 @@ builder.Services.AddScoped<IAuthorService, AuthorService>();
 builder.Services.AddScoped<IUserAccountService, UserAccountService>();
 builder.Services.AddScoped<IPasswordHashingService, PasswordHashingService>();
 builder.Services.AddScoped<IJWTService, JWTService>();
+builder.Services.AddScoped<IPermissionService, PermissionService>();
 
 // API
 
@@ -79,6 +82,11 @@ if (jwtSettingsInstance == null)
         "No JWT settings configured. Please provide a JWT configuration section in the appsettings.json file or environment variables.");
 
 builder.Services.AddAuthorization(); // used for policy / role / permissions system
+builder.Services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
+builder.Services
+    .AddSingleton<IAuthorizationPolicyProvider, PermissionAuthorizationPolicyProvider>();
+
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme) // configure jwt 
     .AddJwtBearer(options =>
     {
@@ -99,6 +107,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme) // co
                 new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettingsInstance.SecretKey)),
             ValidateIssuerSigningKey = true
         };
+
+        // Prevent inbound claim names being altered by .NET 
+        options.MapInboundClaims = false;
 
         // Implement the abiltiy for the asp.net authentication middleware to get the token from the cookie
         options.Events = new JwtBearerEvents
@@ -136,6 +147,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

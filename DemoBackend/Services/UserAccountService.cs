@@ -42,8 +42,12 @@ public class UserAccountService(
             HashSize = hashingSettings.Value.HashSize,
             HashSaltSize = hashingSettings.Value.SaltSize,
             HashIterations = hashingSettings.Value.Iterations,
-            HashAlgorithm = hashingSettings.Value.Algorithm
+            HashAlgorithm = hashingSettings.Value.Algorithm,
         };
+
+        var defaultRoles = db.Roles.Where(r => r.IsDefault).ToList();
+
+        account.Roles = defaultRoles;
 
         db.UserAccounts.Add(account);
 

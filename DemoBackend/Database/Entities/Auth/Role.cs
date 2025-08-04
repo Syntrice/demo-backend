@@ -6,11 +6,12 @@ namespace DemoBackend.Database.Entities.Auth;
 
 public sealed class Role : IEntity<Guid>
 {
+    public Guid Id { get; set; }
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
+    public bool IsDefault { get; set; }
     public ICollection<UserAccount> Users { get; set; } = new List<UserAccount>();
     public Permission[] Permissions { get; set; } = [];
-    public Guid Id { get; set; }
 }
 
 internal class RoleEntityTypeConfiguration : IEntityTypeConfiguration<Role>

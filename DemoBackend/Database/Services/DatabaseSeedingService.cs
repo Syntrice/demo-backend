@@ -33,7 +33,8 @@ public class DatabaseSeedingService : IDatabaseSeedingService
             new Role
             {
                 Name = "User", Description = "Standard user with read-only access",
-                Permissions = [Permission.ReadAuthors, Permission.ReadBooks]
+                Permissions = [Permission.ReadAuthors, Permission.ReadBooks],
+                IsDefault = true
             },
             new Role
             {

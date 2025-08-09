@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace DemoBackend.Database.Services;
+namespace DemoBackend.Database.Services.Seeding;
 
 public interface IDatabaseSeedingService
 {

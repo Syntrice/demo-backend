@@ -3,6 +3,7 @@ using DemoBackend.Authorization;
 using DemoBackend.Common.Mapping;
 using DemoBackend.Database;
 using DemoBackend.Database.Services;
+using DemoBackend.Database.Services.Seeding;
 using DemoBackend.Services;
 using DemoBackend.Settings;
 using FluentValidation;
@@ -18,6 +19,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.BindSettings();
 builder.Services.AddMappersFromAssemblyContaining<Program>();
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+builder.Services.AddSeedersFromAssemblyContaining<Program>();
 
 // Database
 
